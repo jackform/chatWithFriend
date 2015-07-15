@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fadingEdge="none" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <!-- header image display for upload -->
+
+        <RelativeLayout
+            android:id="@+id/header_choosen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/more_item_press" >
+
+            <ImageView
+                android:id="@+id/head_image"
+                android:layout_width="90dp"
+                android:layout_height="120dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="40dp"
+                android:contentDescription="@null"
+                android:scaleType="fitXY"
+                android:src="@mipmap/ic_launcher" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@id/head_image"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <Button
+                    android:id="@+id/album_choose"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:background="@drawable/more_item_press"
+                    android:text="@string/choose_from_album"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/camera_choose"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/more_item_press"
+                    android:text="@string/choose_from_camera"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </RelativeLayout>
+        <!-- fundamental info -->
+
+        <LinearLayout
+            android:id="@+id/member_body_id"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:padding="15dp"
+            android:background="@drawable/more_item_press"
+            android:orientation="vertical" >
+
+            <!-- place for inputting account -->
+            <org.jackform.innocent.widget.AccountEditText
+                android:id="@+id/et_register_account"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textSize="16sp"
+                android:hint="@string/et_account_hint"
+                app:met_floatingLabelText="@string/tv_account"
+                app:met_floatingLabel="normal"/>
+
+            <!-- place for inputting password -->
+            <org.jackform.innocent.widget.PasswordEditText
+                android:id="@+id/et_register_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:hint="@string/et_password_hint"
+                android:textSize="16sp"
+                app:met_floatingLabelText="@string/tv_password"
+                app:met_floatingLabel="normal"/>
+
+            <!-- place for inputting password again -->
+            <org.jackform.innocent.widget.PasswordEditText
+                android:id="@+id/et_regiter_repeat_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:hint="@string/et_password_again_hint"
+                android:textSize="16sp"
+                app:met_floatingLabelText="@string/tv_password_repeat"
+                app:met_floatingLabel="normal"/>
+
+            <!-- place for inputting age info -->
+            <org.jackform.innocent.widget.AgeEditText
+                android:id="@+id/et_age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:hint="@string/et_age_hint"
+                android:textSize="16sp"
+                app:met_floatingLabelText="@string/tv_age"
+                app:met_floatingLabel="normal"/>
+
+            <RadioGroup
+                android:id="@+id/rg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/male"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/male"
+                    android:textSize="16sp" />
+
+                <RadioButton
+                    android:id="@+id/female"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/female"
+                    android:textSize="16sp" />
+            </RadioGroup>
+
+    </LinearLayout>
+
+        <Button
+            android:id="@+id/submit_register_info"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/more_item_press"
+            android:gravity="center"
+            android:text="@string/btn_submit"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</ScrollView>

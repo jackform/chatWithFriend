@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.jackform.innocent" >
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <application
+        android:name="org.jackform.innocent.service.INApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/CustomActionBarTheme">
+        <activity
+            android:name=".activity.LoginActivity"
+            android:label="@string/title_activity_login"
+            android:process="org.jackform.innocent.uicontroler"
+            >
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activity.MainTabActivity"
+            android:process="org.jackform.innocent.uicontroler"/>
+        <activity android:name=".activity.RegisterActivity"
+            android:process="org.jackform.innocent.uicontroler"/>
+        <activity android:name=".activity.ChatActivity"
+            android:process="org.jackform.innocent.uicontroler"/>
+        <service
+            android:name=".service.NetworkService"
+            android:enabled="true"
+            android:exported="false"
+            android:process="org.jackform.innocent.dataprovider">
+        </service>
+    </application>
+
+</manifest>

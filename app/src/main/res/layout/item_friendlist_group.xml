@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="horizontal"
+	android:background="@drawable/list_item_border"
+	android:paddingLeft="5dp"
+	android:layout_width="match_parent"
+	android:layout_height="40dp">
+  
+    <ImageView
+		android:id="@+id/groupImage"
+		android:layout_width="match_parent"
+		android:layout_height="16dp"
+		android:layout_gravity="center"
+		android:layout_weight="1.8" />
+    <TextView
+		android:id="@+id/groupName"
+		android:layout_width="match_parent"
+		android:layout_height="42dp"
+		android:paddingLeft="15dp"
+		android:paddingTop="11dp"
+		android:text="fdg"
+		android:textSize="12sp"
+		android:layout_weight="1.0" />
+    <TextView
+		android:id="@+id/childCount"
+		android:layout_width="match_parent"
+		android:layout_height="42dp"
+		android:gravity="right"
+		android:paddingTop="11dp"
+		android:paddingRight="10dp"
+		android:text="0"
+		android:layout_weight="1.0" />
+</LinearLayout>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/ColorPrimary"
+        android:theme="@style/CustomActionBarTheme"
+        android:elevation="4dp"
+        android:navigationIcon="@mipmap/nav_btn_back">
+
+    </android.support.v7.widget.Toolbar>
+    <FrameLayout android:id="@+id/content_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+    
+    <RadioGroup android:id="@+id/tab_view"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/background_dark">
+    	<RadioButton android:id="@+id/friendlist_tab"
+            style="@style/tab_button"  
+            android:text="好友"
+            android:drawableTop="@drawable/tab_cards_selector" 
+            android:checked="true"/>  
+       	<RadioButton android:id="@+id/tab2"
+            style="@style/tab_button"  
+            android:text="微博" 
+            android:drawableTop="@drawable/tab_cards_selector"/>
+       	<RadioButton android:id="@+id/tab3"
+            style="@style/tab_button"  
+            android:text="微博" 
+            android:drawableTop="@drawable/tab_cards_selector"/>
+        <RadioButton android:id="@+id/tab4"
+            style="@style/tab_button"  
+            android:text="微博" 
+            android:drawableTop="@drawable/tab_cards_selector"/>
+    </RadioGroup>       
+</LinearLayout>

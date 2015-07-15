@@ -1,0 +1,39 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+    <style name="CustomActionBarTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/ColorPrimary</item>
+        <item name="colorPrimaryDark">@color/ColorPrimaryDark</item>
+        <!--
+        <item name="android:windowTitleBackgroundStyle">@style/ActionBarBackground</item>
+        <item name="android:windowTitleStyle">@style/TitleTextStyle</item>
+        -->
+    </style>
+
+    <!--
+    <style name="ActionBarBackground">
+        <item name="android:background">@android:color/background_dark</item>
+    </style>
+    <style name="TitleTextStyle">
+        <item name="android:textSize">0sp</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+    -->
+    <style name="tab_button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:paddingTop">8dip</item>
+        <item name="android:paddingBottom">4dip</item>
+        <item name="android:textColor">#ffffffff</item>
+        <item name="android:button">@null</item>
+    </style>
+</resources>

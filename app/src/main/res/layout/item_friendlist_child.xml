@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="@drawable/list_child_layer"
+	android:descendantFocusability="blocksDescendants" >
+  
+    <ImageButton
+		android:id="@+id/ct_photo"
+		android:layout_width="52dp"
+		android:layout_height="52dp"
+		android:layout_margin="5dp" />
+    <TextView
+		android:id="@+id/ct_name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:padding="5dp"
+		android:maxLength="7"
+		android:textSize="7sp"
+		android:textStyle="bold"
+		android:text="为你我受冷风吹"
+		android:layout_toRightOf="@id/ct_photo"
+		android:layout_alignTop="@id/ct_photo" />
+    <TextView
+		android:id="@+id/ct_sign"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textSize="5sp"
+		android:textColor="#ff666666"
+		android:text="为什么受伤的总是我"
+		android:padding="5dp"
+		android:layout_toRightOf="@id/ct_photo"
+		android:layout_alignBottom="@id/ct_photo" />
+</RelativeLayout>

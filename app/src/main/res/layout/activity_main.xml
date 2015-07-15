@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbarAlwaysDrawVerticalTrack="true"
+    android:background="#fff1f1f1"
+    android:scrollbars="vertical"
+    android:orientation="vertical" >
+    <TextView android:id="@+id/test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="hahahaha" />
+
+    <ListView android:id="@+id/qqlist_classify"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fadingEdge="none"
+        android:divider="#ff000000"
+        android:dividerHeight="0.0px" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="#ff666666"
+        android:background="@drawable/qqlist_classify_text"
+        android:padding="4dp"
+        android:text="@string/friends_group"/>
+    <ExpandableListView android:id="@+id/friend_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fadingEdge="none"
+        android:divider="#ff888888"
+        android:dividerHeight="0.0px" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@drawable/qqlist_classify_text"
+        android:padding="4dp"
+        android:textColor="#ff666666"
+        android:textSize="12sp"
+        android:text="@string/life_service" />
+    <ListView android:id="@+id/qqlist_classify_down"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:divider="#ff000000"
+        android:dividerHeight="0.0px" />
+</LinearLayout>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout android:id="@+id/bottom_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <ImageView android:id="@+id/emoji"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="16dp"
+            android:src="@mipmap/ic_launcher"
+            android:contentDescription="@null"
+            android:layout_alignBottom="@+id/chat_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp" />
+
+        <ImageView android:id="@+id/btn_send"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="16dp"
+            android:background="@mipmap/ic_launcher"
+            android:contentDescription="@null"
+            android:layout_alignParentEnd="true"
+            android:layout_alignBottom="@+id/chat_content"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp" />
+
+        <EditText android:id="@+id/chat_content"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_toEndOf="@id/emoji"
+            android:layout_toStartOf="@id/btn_send"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="false"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+    <ListView android:id="@+id/main_chat_form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/bottom_view"
+        android:layout_alignParentStart="true" />
+</RelativeLayout>
