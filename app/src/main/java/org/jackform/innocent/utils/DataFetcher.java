@@ -16,30 +16,56 @@ import org.jackform.innocent.data.request.TaskRequest;
 import org.jackform.innocent.service.AsAResult;
 import org.jackform.innocent.service.NetworkService;
 
-import java.util.ArrayList;
-
 /**
  * Created by jackform on 15-6-30.
  */
 public class DataFetcher {
-    private Context mContext;
-    private ExcuteListener mResultListener;
+    private static Context mContext;
+    private ExecuteListener mResultListener;
     private INetworkService mNetworkHandler;
     private AsAResult resultCallBack;
     private boolean isInit = false;
+    private static DataFetcher sInstance = null;
 
-    public DataFetcher(Context context)
+    public static synchronized DataFetcher getInstance(Context context) {
+        if( null == sInstance) {
+            sInstance = new DataFetcher(context);
+        }
+        return sInstance;
+    }
+
+
+    private DataFetcher(Context context)
     {
         mContext = context;
-        bind2Service();
+        if(!isInit) {
+            bind2Service(context);
+        }
         resultCallBack = new AsAResult(this);
     }
 
-    public void getResultListener(ExcuteListener resultListener) {
-        mResultListener =resultListener;
+    public void addExecuteListener(ExecuteListener resultListener) {
+        if(!isInit) {
+            bind2Service(mContext);
+        }
+
+        if(null == resultListener) {
+            //TODO some error deal with
+            return ;
+        }
+        resultCallBack.addResultListener(resultListener.getCaller(),resultListener);
     }
 
-    public ExcuteListener getResultListener() {
+    public DataFetcher.ExecuteListener removeExecuteListener(int caller) {
+        return resultCallBack.removeResultListener(caller);
+    }
+
+    public void getResultListener(ExecuteListener resultListener) {
+        mResultListener = resultListener;
+    }
+
+
+    public ExecuteListener getResultListener() {
         return mResultListener;
     }
 
@@ -47,15 +73,15 @@ public class DataFetcher {
         isInit = true;
     }
 
-    public interface ExcuteListener {
-        void onExcuteResult(int responseID,Bundle requestTask);
+    public interface ExecuteListener {
+        int getCaller();
+        void onExecuteResult(int responseID, Bundle requestTask);
     }
 
-    public void executeRequest(int requestID,TaskRequest request) {
+    public void executeRequest(ExecuteListener l,int requestID,TaskRequest request) {
 
-        if( null == mResultListener )
-            return ;
         if(!isInit) {
+            bind2Service(mContext);
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -63,15 +89,12 @@ public class DataFetcher {
             }
         }
         if(!isInit) {
-            //TODO error:service connect time out
-//            mResultListener.onExcuteResult();
-        } else if( mNetworkHandler == null ) {
-            //TODO error:service disconnected
-//            mResultListener.onExcuteResult();
+            //TODO error:service connect time out, return connect service error
+//            mResultListener.onExecuteResult();
         } else {
             try {
                 Bundle parcel = new Bundle();
-                request.setCaller(mContext.getClass().getName());
+                request.setCaller(l.getCaller());
                 parcel.putParcelable(RequestConstant.REQUEST_PARAMS,(Parcelable)request);
                 mNetworkHandler.executeRequest(requestID,parcel);
             } catch (RemoteException e) {
@@ -79,6 +102,8 @@ public class DataFetcher {
             }
         }
     }
+
+
 
     /*
    public class AsResult extends IResult.Stub {
@@ -105,7 +130,7 @@ public class DataFetcher {
             if(mResultListener == null)
                 return;
             if(result.getString("ResultCode").equals("Success")) {
-                mResultListener.onExcuteResult(new TaskResult(){});
+                mResultListener.onExecuteResult(new TaskResult(){});
             } else {
                 mResultListener.onExcuteError(new TaskResult(){});
             }
@@ -118,6 +143,7 @@ public class DataFetcher {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mNetworkHandler = INetworkService.Stub.asInterface(service);
+            DebugLog.v("connect service success");
             try {
                 mNetworkHandler.init(resultCallBack,mContext.getClass().getName());
             } catch (RemoteException e) {
@@ -129,6 +155,7 @@ public class DataFetcher {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             mNetworkHandler = null;
+            isInit = false;
         }
     };
 
@@ -136,20 +163,8 @@ public class DataFetcher {
         mContext.unbindService(conn);
     }
 
-    public void bind2Service(){
-        Intent intent = new Intent(mContext, NetworkService.class);
-        mContext.bindService(intent,conn,Service.BIND_AUTO_CREATE);
-        /*
-        mContext.bindService(intent, new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-//                mContext.toast("activity bind service successd!");
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-            }
-        }, Service.BIND_AUTO_CREATE);
-        */
+    public void bind2Service(Context context){
+        Intent intent = new Intent(context, NetworkService.class);
+        context.bindService(intent,conn,Service.BIND_AUTO_CREATE);
     }
 }

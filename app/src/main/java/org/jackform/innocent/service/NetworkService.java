@@ -14,6 +14,7 @@ import org.jackform.innocent.IResult;
 import org.jackform.innocent.activity.RegisterActivity;
 import org.jackform.innocent.data.RequestConstant;
 import org.jackform.innocent.data.ResponseConstant;
+import org.jackform.innocent.data.request.GetFriendListRequest;
 import org.jackform.innocent.data.request.LoginTaskRequest;
 import org.jackform.innocent.data.request.RegisterTaskRequest;
 import org.jackform.innocent.data.request.UnBindTaskRequest;
@@ -56,6 +57,12 @@ public class NetworkService extends Service {
         return mActivities.get(callerHash);
     }
 
+    public IResult getCallback() {
+        return mResult;
+    }
+
+    private IResult mResult;
+
     private Handler mHandler = new Handler(mCallback);
 
     private INetworkService.Stub mBinder = new INetworkService.Stub() {
@@ -65,13 +72,20 @@ public class NetworkService extends Service {
             Log.v("hahaha", "enter the init");
             Log.v("hahaha", hash + "send the request");
 //            if(!mActivities.containsKey(hash)) {
-                Log.v("hahaha","saved the ["+hash+"]:["+result+"]");
-                mActivities.put(hash,result);
+//                Log.v("hahaha","saved the ["+hash+"]:["+result+"]");
+//                mActivities.put(hash,result);
 //            }
-            Message m = Message.obtain();
-            m.obj = hash;
-            m.what = 0x1;
-            mHandler.sendMessage(m);
+
+            Bundle response = new Bundle();
+            response.putInt(ResponseConstant.ID,ResponseConstant.INIT_ID);
+            response.putString(ResponseConstant.CODE,ResponseConstant.SUCCESS_CODE);
+            mResult = result;
+            result.onResult(ResponseConstant.INIT_ID,response);
+
+//            Message m = Message.obtain();
+//            m.obj = hash;
+//            m.what = 0x1;
+//            mHandler.sendMessage(m);
         }
 
         @Override
@@ -99,7 +113,13 @@ public class NetworkService extends Service {
                     Log.v("hahaha","register\naccount:"+registerTaskRequest.getAccount()+" password:"+registerTaskRequest.getPassword());
                     XmppExecutor.getInstance(NetworkService.this).submit(registerTaskRequest);
                     break;
+                case RequestConstant.REQUEST_GET_FRIEND_LIST:
+                    request.setClassLoader(GetFriendListRequest.class.getClassLoader());
+                    GetFriendListRequest getFriendListRequest = request.getParcelable(RequestConstant.REQUEST_PARAMS);
+                    XmppExecutor.getInstance(NetworkService.this).submit(getFriendListRequest);
+                    break;
                 case RequestConstant.REQUEST_BASE:
+
                 default:
                     //TODO invalid request ID
 

@@ -12,6 +12,7 @@ import org.jackform.innocent.data.request.TaskRequest;
 import org.jackform.innocent.data.result.TaskResult;
 import org.jackform.innocent.service.NetworkService;
 import org.jackform.innocent.utils.BaseMethod;
+import org.jackform.innocent.utils.DebugLog;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.util.concurrent.ExecutorService;
@@ -38,10 +39,11 @@ public class XmppExecutor {
 
 
     public void submit(TaskRequest request) {
-        String caller = request.getCaller();
+        int caller = request.getCaller();
         Log.v("hahaha","the caller is "+caller);
-        IResult resultCallback = ((NetworkService)mContext).getCallerCallback(caller);
-        XmppAsyncTask newTask = new XmppAsyncTask(resultCallback);
+//        IResult resultCallback = ((NetworkService)mContext).getCallerCallback(caller);
+        IResult resultCallback = ((NetworkService)mContext).getCallback();
+        XmppAsyncTask newTask = new XmppAsyncTask(resultCallback,caller);
 //        why can't ?
 //        newTask.executeOnExecutor(mThreadPool, request);
         newTask.execute(request);
@@ -50,8 +52,10 @@ public class XmppExecutor {
 
     static class XmppAsyncTask extends AsyncTask<TaskRequest,Void,Bundle> {
         private IResult mResultCallBack;
-        public XmppAsyncTask(IResult r) {
+        private int mCaller;
+        public XmppAsyncTask(IResult r,int caller) {
             mResultCallBack = r;
+            mCaller = caller;
         }
 
         @Override
@@ -63,7 +67,8 @@ public class XmppExecutor {
             if(!baseMethod.isConnect()) {
                 result = baseMethod.connect();
             }
-            if(result.getString(ResponseConstant.CODE).equals(ResponseConstant.SUCCESS_CODE)){
+            if( result == null ||
+                    result.getString(ResponseConstant.CODE).equals(ResponseConstant.SUCCESS_CODE)){
                 result = request.performDataFetcher();
             }
             return result;
@@ -74,8 +79,11 @@ public class XmppExecutor {
             super.onPostExecute(response);
 
             int responseID = response.getInt(ResponseConstant.ID);
+            response.putInt(ResponseConstant.CALLER, mCaller);
+            DebugLog.v("start return result to caller:"+mCaller);
             try {
                 if(mResultCallBack == null) {
+                    DebugLog.v("result callback is null");
                     Log.v("hahaha","result callback is null");
                     return ;
                 }

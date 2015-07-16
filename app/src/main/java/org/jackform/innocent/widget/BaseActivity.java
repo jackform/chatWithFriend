@@ -22,14 +22,14 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstantceState) {
 //        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         super.onCreate(savedInstantceState);
-        mDataFetcher = new DataFetcher(this);
+        mDataFetcher = DataFetcher.getInstance(getApplication());
 //        mInputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
     protected void unBindRemoteService() {
-        UnBindTaskRequest request = new UnBindTaskRequest();
-        mDataFetcher.executeRequest(RequestConstant.REQUEST_UNBIND,request);
-        mDataFetcher.unbindService();
+//        UnBindTaskRequest request = new UnBindTaskRequest();
+//        mDataFetcher.executeRequest(RequestConstant.REQUEST_UNBIND,request);
+//        mDataFetcher.unbindService();
     }
 
     @Override

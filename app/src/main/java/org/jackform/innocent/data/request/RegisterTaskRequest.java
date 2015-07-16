@@ -41,7 +41,7 @@ public class RegisterTaskRequest extends TaskRequest implements Parcelable{
     public RegisterTaskRequest(Parcel source)
     {
         super();
-        mCaller = source.readString();
+        mCaller = source.readInt();
         registerAccount = source.readString();
         registerPassword = source.readString();
         int byteLen = source.readInt();
@@ -68,7 +68,7 @@ public class RegisterTaskRequest extends TaskRequest implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mCaller);
+        dest.writeInt(mCaller);
         dest.writeString(registerAccount);
         dest.writeString(registerPassword);
         dest.writeInt(headerImage.length);

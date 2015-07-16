@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 
+import org.jackform.innocent.utils.DataFetcher;
+
 import java.nio.charset.MalformedInputException;
 
 /**
@@ -29,11 +31,11 @@ public class INApplication extends Application{
         super.onCreate();
         context = this;
         mINApplication = this;
-
         //TODO some application's data initial
-        //TODO start a service for send\receive network data
-        Intent intent = new Intent(this,NetworkService.class);
-        startService(intent);
+
+        //start a service for send\receive network data
+        //bindService in case of that system killed the service
+        DataFetcher.getInstance(this);
     }
 }
 

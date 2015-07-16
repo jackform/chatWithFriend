@@ -20,25 +20,17 @@ import org.jackform.innocent.widget.BaseActivity;
 
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
-import java.util.HashMap;
-
 /**
  * Created by jackform on 15-6-8.
  */
-public class MainTabActivity extends BaseActivity implements DataFetcher.ExcuteListener{
+public class MainTabActivity extends BaseActivity implements DataFetcher.ExecuteListener {
 
     private RadioGroup underLineTab;
     private FragmentManager	fragmentManager;
     private Fragment oldFragment = null;
     private int lastClickId;
     private Toolbar mToolBar;
-
-    private Handler mHandler;
-
-    public void setHandler(Handler handler)
-    {
-        mHandler = handler;
-    }
+    private String mAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +56,9 @@ public class MainTabActivity extends BaseActivity implements DataFetcher.ExcuteL
 
 
         Log.v("hahaha","onCreate");
+
+
+        mAccount = getIntent().getStringExtra("ACCOUNT");
 
 
 
@@ -139,22 +134,16 @@ public class MainTabActivity extends BaseActivity implements DataFetcher.ExcuteL
             oldFragment = newFragment;
             transaction.commit();
 
-            Log.v("hahaha","tab click"+checkedId);
-            if(newFragment instanceof FriendListFragment) {
-                Log.v("hahaha","transform to friendlist");
-                if(null == mHandler) {
-                   Log.v("hahaha","in activity:handler is null");
-                } else {
-                    Log.v("hahaha","send the message");
-                    mHandler.sendEmptyMessage(0x1);
-
-                }
-            }
         }
     };
 
     @Override
-    public void onExcuteResult(int responseID, Bundle requestTask) {
+    public int getCaller() {
+        return this.hashCode();
+    }
+
+    @Override
+    public void onExecuteResult(int responseID, Bundle requestTask) {
         switch(responseID) {
         }
 

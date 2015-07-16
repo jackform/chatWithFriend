@@ -6,15 +6,31 @@ import android.util.Log;
 
 import org.jackform.innocent.IResult;
 import org.jackform.innocent.data.ResponseConstant;
+import org.jackform.innocent.data.result.GetFriendListResult;
 import org.jackform.innocent.utils.DataFetcher;
+import org.jackform.innocent.utils.DebugLog;
+
+import java.util.HashMap;
 
 /**
  * Created by jackform on 15-7-2.
  */
 public class AsAResult extends IResult.Stub {
     private DataFetcher mDataFetcher;
+    private HashMap<Integer,DataFetcher.ExecuteListener> mResultListeners;
+
+
+    public void addResultListener(int caller,DataFetcher.ExecuteListener l) {
+        mResultListeners.put(caller,l);
+    }
+
+    public DataFetcher.ExecuteListener removeResultListener(int caller) {
+        return mResultListeners.remove(caller);
+    }
+
     public AsAResult(DataFetcher a) {
         mDataFetcher = a;
+        mResultListeners = new HashMap<Integer,DataFetcher.ExecuteListener>();
     }
 
     @Override
@@ -23,25 +39,52 @@ public class AsAResult extends IResult.Stub {
             Log.v("nonono", "result callback is null");
             return ;
         }
-
-        String responseCode = result.getString(ResponseConstant.CODE);
-        if(!responseCode.equals(ResponseConstant.SUCCESS_CODE)) {
-            //TODO deal with the error
-        }
         switch(responseID) {
             case ResponseConstant.INIT_ID:
-                mDataFetcher.setInitCompleted();
+                onInitCompleted(result);
+                return;
+            case ResponseConstant.REGISTER_ID:
+                onRegisterCompleted(result);
                 break;
+            case ResponseConstant.LOGIN_ID:
+                onLoginCompleted(result);
+                break;
+            case ResponseConstant.GET_FRIEND_LIST_ID:
+                onGetFriendListCompleted(result);
             case ResponseConstant.BASE_ID:
             default:
+                //TODO deal invalid requestID
         }
 
-        DataFetcher.ExcuteListener excuteListener = mDataFetcher.getResultListener();
+        int caller = result.getInt(ResponseConstant.CALLER);
+        DataFetcher.ExecuteListener excuteListener = mResultListeners.get(caller);
+        DebugLog.v("in callback,the caller is:"+caller);
         if(null == excuteListener) {
             return ;
         } else {
-            excuteListener.onExcuteResult(responseID,result);
+            excuteListener.onExecuteResult(responseID, result);
         }
-        //TODO invalid requestID
+    }
+
+    private void onGetFriendListCompleted(Bundle result) {
+        result.setClassLoader(GetFriendListResult.class.getClassLoader());
+    }
+
+    private void onInitCompleted(Bundle result) {
+        String responseCode = result.getString(ResponseConstant.CODE);
+        mDataFetcher.setInitCompleted();
+        if(responseCode.equals(ResponseConstant.SUCCESS_CODE)) {
+            mDataFetcher.setInitCompleted();
+        } else {
+           //TODO deal some init error
+        }
+    }
+
+    private void onRegisterCompleted(Bundle result) {
+
+    }
+
+    private void onLoginCompleted(Bundle result) {
+
     }
 }

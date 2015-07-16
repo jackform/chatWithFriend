@@ -9,15 +9,27 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 import org.jackform.innocent.R;
+import org.jackform.innocent.data.FriendList;
+import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.RosterGroup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FriendListExpandableAdapter extends  BaseExpandableListAdapter {
 	private Context mContext;
 	private String[] armTypes = new String []{"aaa","bbb","ccc"};
 	private String[][] arms = new String[][] {{"a1","a2"},{"b1","b2"},{"c1","c2"}};
 	
-//	private List<RosterGroup> mGroupList;
-//	private List<List<RosterEntry>> mEntris;
-	/*
+	private List<RosterGroup> mGroupList;
+	private List<List<RosterEntry>> mEntris;
+
+	private FriendList mFriendList;
+
+	public void setData(FriendList friendList) {
+		mFriendList = friendList;
+	}
+
 	public void setGroupList(List<RosterGroup> groupList)
 	{
 		mGroupList = groupList;
@@ -29,16 +41,15 @@ public class FriendListExpandableAdapter extends  BaseExpandableListAdapter {
 			mEntris.add(rosterEntries);
 		}
 	}
-	*/
-	
+
 	public FriendListExpandableAdapter(Context context) {
 		mContext = context;
 	}
 	
 	@Override
 	public Object getChild(int groupPosition, int childPosition) {
-		return arms[groupPosition][childPosition];
-//		return mEntris.get(groupPosition).get(childPosition).getUser();
+//		return arms[groupPosition][childPosition];
+		return mEntris.get(groupPosition).get(childPosition).getUser();
 	}
 
 	@Override
@@ -52,28 +63,28 @@ public class FriendListExpandableAdapter extends  BaseExpandableListAdapter {
 		LayoutInflater inflate = LayoutInflater.from(mContext);
 		convertView = inflate.inflate(R.layout.item_friendlist_child, null);
 		TextView friendName = (TextView)convertView.findViewById(R.id.ct_name);
-		friendName.setText(arms[groupPosition][childPosition]);
-//		friendName.setText(mEntris.get(groupPosition).get(childPosition).getName());
+//		friendName.setText(arms[groupPosition][childPosition]);
+		friendName.setText(mEntris.get(groupPosition).get(childPosition).getName());
 		
 		return convertView;
 	}
 
 	@Override
 	public int getChildrenCount(int groupPosition) {
-		return arms[groupPosition].length;
-//		return null == mEntris ? 0 : mEntris.get(groupPosition).size();
+//		return arms[groupPosition].length;
+		return null == mEntris ? 0 : mEntris.get(groupPosition).size();
 	}
 
 	@Override
 	public Object getGroup(int groupPosition) {
-//		return mEntris.get(groupPosition);
-		return armTypes[groupPosition];
+		return mEntris.get(groupPosition);
+//		return armTypes[groupPosition];
 	}
 
 	@Override
 	public int getGroupCount() {
-//		return null == mEntris ? 0 : mEntris.size();
-		return armTypes.length;
+		return null == mEntris ? 0 : mEntris.size();
+//		return armTypes.length;
 	}
 
 	@Override
@@ -86,8 +97,8 @@ public class FriendListExpandableAdapter extends  BaseExpandableListAdapter {
 		LayoutInflater inflate = LayoutInflater.from(mContext);
 		convertView = inflate.inflate(R.layout.item_friendlist_group, null);
 		TextView groupName = (TextView) convertView.findViewById(R.id.groupName);
-//		groupName.setText(mGroupList.get(groupPosition).getName());
-		groupName.setText(armTypes[groupPosition].toString());
+		groupName.setText(mGroupList.get(groupPosition).getName());
+//		groupName.setText(armTypes[groupPosition].toString());
 		return convertView;
 	}
 

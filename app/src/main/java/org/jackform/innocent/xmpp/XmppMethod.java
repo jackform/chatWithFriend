@@ -1,12 +1,21 @@
 package org.jackform.innocent.xmpp;
 
 import android.os.Bundle;
+import android.test.SyncBaseInstrumentation;
+import android.util.Log;
 
+import com.google.gson.Gson;
+
+import org.jackform.innocent.data.FriendList;
 import org.jackform.innocent.data.ResponseConstant;
+import org.jackform.innocent.data.result.GetFriendListResult;
 import org.jackform.innocent.utils.BaseMethod;
+import org.jackform.innocent.utils.DebugLog;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.PacketCollector;
+import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.RosterGroup;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -18,6 +27,11 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Registration;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
+import org.xbill.DNS.MFRecord;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by jackform on 15-7-6.
@@ -26,10 +40,24 @@ public class XmppMethod implements BaseMethod{
     private XMPPConnection mConnect;
     private boolean isConnected = false;
     private static final String IP_ADRESS = "172.18.66.212";
-//    private static final String IP_ADRESS = "192.168.1.11";
+    private boolean isLogined = false;
+    private String loginName;
+//     private static final String IP_ADRESS = "192.168.1.11";
+    private static XmppMethod sInstance = null;
 
-    public XmppMethod() {
+    private XmppMethod() {
 
+    }
+
+    public Roster getRoster() {
+        return mConnect.getRoster();
+    }
+
+    public static XmppMethod getInstance() {
+        if( null == sInstance ) {
+           sInstance = new XmppMethod();
+        }
+        return sInstance;
     }
 
     @Override
@@ -54,6 +82,7 @@ public class XmppMethod implements BaseMethod{
             e.printStackTrace();
         }
         result.putString(ResponseConstant.CODE, ResponseConstant.SUCCESS_CODE);
+        isConnected = true;
         return result;
     }
 
@@ -62,13 +91,18 @@ public class XmppMethod implements BaseMethod{
         Bundle result = new Bundle();
         result.putInt(ResponseConstant.ID, ResponseConstant.LOGIN_ID);
         try {
-            mConnect.login(account,password);
+            mConnect.login(account, password);
         } catch (XMPPException e) {
             e.printStackTrace();
             throw new RuntimeException();
         }
         result.putString(ResponseConstant.CODE,ResponseConstant.SUCCESS_CODE);
+        isLogined = true;
         return result;
+    }
+
+    public boolean isLogin() {
+        return isConnected && isLogined;
     }
 
     @Override
@@ -128,6 +162,17 @@ public class XmppMethod implements BaseMethod{
 
     @Override
     public Bundle getFriendList() {
-        return null;
+        Bundle res = new Bundle();
+        res.putInt(ResponseConstant.ID,ResponseConstant.GET_FRIEND_LIST_ID);
+        Roster roster = mConnect.getRoster();
+        FriendList mfriendList = new FriendList(roster);
+//        String friendJson
+        Gson gson = new Gson();
+        String jsonStr = gson.toJson(mfriendList);
+        DebugLog.v("[friendList]:"+jsonStr);
+        GetFriendListResult getFriendListResult = new GetFriendListResult(jsonStr);
+        res.putString(ResponseConstant.CODE, ResponseConstant.SUCCESS_CODE);
+        res.putParcelable(ResponseConstant.PARAMS,getFriendListResult);
+        return res;
     }
 }

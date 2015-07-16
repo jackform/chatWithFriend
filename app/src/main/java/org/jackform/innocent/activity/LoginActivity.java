@@ -15,18 +15,24 @@ import org.jackform.innocent.data.request.LoginTaskRequest;
 import org.jackform.innocent.utils.DataFetcher;
 import org.jackform.innocent.widget.BaseActivity;
 
-public class LoginActivity extends BaseActivity implements DataFetcher.ExcuteListener{
+public class LoginActivity extends BaseActivity implements DataFetcher.ExecuteListener {
 
     private EditText mEdtAccount;
     private EditText mEdtPassword;
     private TextView mRegister;
 
     @Override
-    public void onExcuteResult(int responseID,Bundle result) {
+    public int getCaller() {
+        return this.hashCode();
+    }
+
+    @Override
+    public void onExecuteResult(int responseID, Bundle result) {
         //TODO if result isn't sucess
         switch(responseID) {
             case ResponseConstant.LOGIN_ID:
                 Intent intent = new Intent(LoginActivity.this,MainTabActivity.class);
+                intent.putExtra("ACCOUNT","jackform");
                 startActivity(intent);
                 unBindRemoteService();
                 finish();
@@ -41,7 +47,8 @@ public class LoginActivity extends BaseActivity implements DataFetcher.ExcuteLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mDataFetcher.getResultListener(this);
+//        mDataFetcher.getResultListener(this);
+        mDataFetcher.addExecuteListener(this);
 
         mEdtAccount = (EditText)findViewById(R.id.et_account);
         mEdtPassword = (EditText)findViewById(R.id.et_password);
@@ -55,8 +62,8 @@ public class LoginActivity extends BaseActivity implements DataFetcher.ExcuteLis
                        String password = mEdtPassword.getText().toString();
                        if(!TextUtils.isEmpty(account) &&
                                !TextUtils.isEmpty(password)) {
-                           LoginTaskRequest params = new LoginTaskRequest(null,account,password);
-                           mDataFetcher.executeRequest(RequestConstant.REQUEST_LOGIN,params);
+                           LoginTaskRequest params = new LoginTaskRequest(account,password);
+                           mDataFetcher.executeRequest(LoginActivity.this,RequestConstant.REQUEST_LOGIN,params);
 
                        } else {
                            toast("账号密码不能为空");

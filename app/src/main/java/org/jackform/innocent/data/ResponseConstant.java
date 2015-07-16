@@ -8,12 +8,14 @@ public interface ResponseConstant {
     String CODE = "REMOTE_CALL_BACK_CODE";
     String ESCRIPTION = "REMOTE_CALL_BACK_DESCRIPTION";
     String PARAMS = "REMOTE_CALL_BACK_PARAM";
+    String CALLER = "REMOTE_CALLER_NAME";
 
     int BASE_ID = 0;
     int INIT_ID = BASE_ID + 1;
     int CONNECT_ID = BASE_ID + 2;
     int LOGIN_ID = BASE_ID + 3;
     int REGISTER_ID = BASE_ID + 4;
+    int GET_FRIEND_LIST_ID = BASE_ID + 5;
 
 
 

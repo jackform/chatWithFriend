@@ -9,24 +9,24 @@ import org.jackform.innocent.xmpp.XmppMethod;
  * Created by jackform on 15-6-30.
  */
 abstract public class TaskRequest {
-    protected String mCaller;
+    protected int mCaller;
     protected BaseMethod mDelegator;
-    public TaskRequest(String caller) {
+    public TaskRequest(int caller) {
         mCaller = caller;
     }
     public TaskRequest() {
-        mDelegator = new XmppMethod();
+        mDelegator = XmppMethod.getInstance();
     }
 
     public BaseMethod getMethodDelegator() {
         return mDelegator;
     }
 
-    public String getCaller() {
+    public int getCaller() {
         return mCaller;
     }
 
-    public void setCaller(String caller) {
+    public void setCaller(int caller) {
         mCaller = caller;
     }
 

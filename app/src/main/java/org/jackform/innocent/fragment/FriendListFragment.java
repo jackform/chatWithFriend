@@ -4,69 +4,38 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import org.jackform.innocent.R;
 import org.jackform.innocent.activity.ChatActivity;
-import org.jackform.innocent.activity.MainTabActivity;
 import org.jackform.innocent.adapter.FriendListExpandableAdapter;
+import org.jackform.innocent.data.FriendList;
+import org.jackform.innocent.data.RequestConstant;
+import org.jackform.innocent.data.ResponseConstant;
+import org.jackform.innocent.data.request.GetFriendListRequest;
+import org.jackform.innocent.data.result.GetFriendListResult;
+import org.jackform.innocent.utils.DataFetcher;
+import org.jackform.innocent.utils.DebugLog;
+import org.jackform.innocent.xmpp.XmppMethod;
+import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.RosterGroup;
 
-import android.os.Handler.Callback;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-public class FriendListFragment extends BaseFragment {
+public class FriendListFragment extends BaseFragment implements DataFetcher.ExecuteListener {
 	private FriendListExpandableAdapter friendListAdapter;
 	private ExpandableListView friendListView;
 	private Context mContext;
-
-	private Callback mCallback = new Callback() {
-		@Override
-		public boolean handleMessage(Message msg) {
-			switch(msg.what) {
-				case 0x1:
-                    if(null == tv ) {
-                        Log.v("hahaha","tv is null");
-                    } else {
-						Log.v("hahaha","append the message");
-                        tv.append(" nine old fucker");
-                    }
-                    break;
-				default:
-					break;
-			}
-			return false;
-		}
-	};
-	private Handler mHanler = new Handler(mCallback);
-
-
-
-	public void transFromActivity(final String message) {
-		Log.v("hahaha","obtain the message from TabActivity:"+message);
-//		tv.append(message);
-		Bundle bundle = getArguments();
-		String a = bundle.getString("hahaha");
-		Log.v("hahaha","obtain the message from TabActivity:"+a);
-
-
-		/*
-		((Activity)mContext).runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				tv.append(message);
-			}
-		});
-		*/
-
-	}
+	private DataFetcher mDataFetcher;
 
 	@Override
 	public boolean isUse() {
@@ -77,30 +46,16 @@ public class FriendListFragment extends BaseFragment {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		mContext = activity;
-		((MainTabActivity)activity).setHandler(mHanler);
-		Log.v("hahaha","onAttach");
+		Log.v("hahaha", "onAttach");
 	}
-	/*
-	private List<RosterGroup> getGroups(Roster roster) {
-		List<RosterGroup> groupsList = new ArrayList<RosterGroup>();
-		Collection<RosterGroup> rosterGroup = roster.getGroups();
-		for (RosterGroup r : rosterGroup) {
-			groupsList.add(r);
-		}
-		return groupsList;
-		gvo
-	}
-	*/
 
 
-	private TextView tv;
 	@Override
 	public View onCreateView(LayoutInflater inflater,
-			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+							 @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
 		super.onCreateView(inflater, container, savedInstanceState);
 		View view = inflater.inflate(R.layout.activity_main, null);
-		tv = (TextView)view.findViewById(R.id.test);
 
 		friendListAdapter = new FriendListExpandableAdapter(mContext);
 		friendListView = (ExpandableListView) view
@@ -110,29 +65,73 @@ public class FriendListFragment extends BaseFragment {
 				.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 					@Override
 					public boolean onChildClick(ExpandableListView parent,
-							View v, int groupPosition, int childPosition,
-							long id) {
+												View v, int groupPosition, int childPosition,
+												long id) {
 						Object child = friendListAdapter.getChild(groupPosition, childPosition);
 						Intent intent = new Intent(mContext, ChatActivity.class);
-						Log.v("",child.toString());
-						intent.putExtra("FRIEND_INFO",child.toString());
+						Log.v("", child.toString());
+						intent.putExtra("FRIEND_INFO", child.toString());
 						startActivity(intent);
 						return false;
 					}
 				});
-//		obtainFriendList o = new obtainFriendList();
-//		o.start();
-		Log.v("hahaha","onCreateView");
+		mDataFetcher = DataFetcher.getInstance(((Activity) mContext).getApplication());
+		mDataFetcher.addExecuteListener(this);
+		requestFriendList();
+//		mDataFetcher.addExecuteListener(r);
 		return view;
 	}
 
-	/*
-	class obtainFriendList extends Thread {
-		public void run() {
-			Roster roster = XmppUtils.getConnection().getRoster();
-			friendListAdapter.setGroupList(getGroups(roster));
-			friendListAdapter.notifyDataSetChanged();
+	private List<RosterGroup> getGroups(Roster roster) {
+		List<RosterGroup> groupsList = new ArrayList<RosterGroup>();
+		Collection<RosterGroup> rosterGroup = roster.getGroups();
+		for (RosterGroup r : rosterGroup) {
+			groupsList.add(r);
 		}
+		DebugLog.v("group size: " + groupsList.size());
+		return groupsList;
 	}
-	*/
+
+	void requestFriendList() {
+		GetFriendListRequest request = new GetFriendListRequest();
+		mDataFetcher.executeRequest(FriendListFragment.this, RequestConstant.REQUEST_GET_FRIEND_LIST, request);
+		/*
+		new Thread() {
+			@Override
+			public void run() { if (!XmppMethod.getInstance().isConnect()) XmppMethod.getInstance().connect();
+				XmppMethod.getInstance().login("jackform", "awfityvi");
+				Roster roster = XmppMethod.getInstance().getRoster();
+				friendListAdapter.setGroupList(getGroups(roster));
+				((Activity) mContext).runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						friendListAdapter.notifyDataSetChanged();
+					}
+				});
+			}
+		}.start();
+		*/
+	}
+
+	@Override
+	public int getCaller() {
+		return this.hashCode();
+	}
+
+	@Override
+	public void onExecuteResult(int responseID, Bundle requestTask) {
+		//TODO some error deal with
+		switch(responseID) {
+    		case ResponseConstant.GET_FRIEND_LIST_ID:
+				GetFriendListResult getFriendListResult = requestTask.getParcelable(ResponseConstant.PARAMS);
+				String jsonStr = getFriendListResult.getmJsonFriendList();
+				Gson gson = new Gson();
+				DebugLog.v("the return friend list json is "+jsonStr);
+				FriendList friendList = gson.fromJson(jsonStr,FriendList.class);
+
+			break;
+		}
+
+	}
 }
+

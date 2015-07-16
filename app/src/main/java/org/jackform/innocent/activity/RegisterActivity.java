@@ -42,7 +42,7 @@ import cropper.CropImageView;
 
 import android.content.CursorLoader;
 
-public class RegisterActivity extends BaseActivity implements DataFetcher.ExcuteListener {
+public class RegisterActivity extends BaseActivity implements DataFetcher.ExecuteListener {
 	private static final String TAG = "RegisterActivity";
 	private static final int CHOOSE_PICTURE = 1;
 	private Button mAlbumChoose, mCaremaChoose;
@@ -136,12 +136,12 @@ public class RegisterActivity extends BaseActivity implements DataFetcher.Excute
 		mCaremaChoose.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				requestRegister(account,password);
+				requestRegister(account, password);
 
 			}
 		});
 
-		mDataFetcher.setResultListener(this);
+		mDataFetcher.addExecuteListener(this);
 	}
 
 
@@ -155,7 +155,7 @@ public class RegisterActivity extends BaseActivity implements DataFetcher.Excute
 						.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 				bytes = baos.toByteArray();
 				RegisterTaskRequest request = new RegisterTaskRequest(account,password,bytes);
-				mDataFetcher.executeRequest(RequestConstant.REQUEST_REGISTER,request);
+				mDataFetcher.executeRequest(RegisterActivity.this,RequestConstant.REQUEST_REGISTER,request);
 			}
 		}.start();
 	}
@@ -373,7 +373,12 @@ public class RegisterActivity extends BaseActivity implements DataFetcher.Excute
 	}
 
 	@Override
-	public void onExcuteResult(int responseID, Bundle requestTask) {
+	public int getCaller() {
+		return this.hashCode();
+	}
+
+	@Override
+	public void onExecuteResult(int responseID, Bundle requestTask) {
 		switch(responseID) {
 			case ResponseConstant.REGISTER_ID:
 				if(requestTask.getString(ResponseConstant.CODE).equals(ResponseConstant.SUCCESS_CODE)){

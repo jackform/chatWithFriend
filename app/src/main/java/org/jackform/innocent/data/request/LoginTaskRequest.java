@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.jackform.innocent.utils.DebugLog;
+
 
 /**
  * Created by jackform on 15-7-1.
@@ -12,15 +14,14 @@ public class LoginTaskRequest extends TaskRequest implements Parcelable {
     private String mAccount;
     private String mPassword;
 
-    public LoginTaskRequest(String caller,String account,String password) {
-        super(caller);
+    public LoginTaskRequest(String account,String password) {
         mAccount = account;
         mPassword = password;
     }
 
     public LoginTaskRequest(Parcel source) {
         super();
-        mCaller = source.readString();
+        mCaller = source.readInt();
         mAccount = source.readString();
         mPassword = source.readString();
 
@@ -45,7 +46,7 @@ public class LoginTaskRequest extends TaskRequest implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mCaller);
+        dest.writeInt(mCaller);
         dest.writeString(mAccount);
         dest.writeString(mPassword);
     }

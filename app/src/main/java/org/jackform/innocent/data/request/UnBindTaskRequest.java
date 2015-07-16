@@ -14,7 +14,7 @@ public class UnBindTaskRequest extends TaskRequest implements Parcelable{
     }
 
     public UnBindTaskRequest(Parcel source) {
-        mCaller = source.readString();
+        mCaller = source.readInt();
     }
 
     public static final Creator<UnBindTaskRequest> CREATOR = new Creator<UnBindTaskRequest>() {
@@ -36,7 +36,7 @@ public class UnBindTaskRequest extends TaskRequest implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mCaller);
+        dest.writeInt(mCaller);
     }
 
     @Override
