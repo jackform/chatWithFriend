@@ -9,6 +9,7 @@ import org.jackform.innocent.data.ResponseConstant;
 import org.jackform.innocent.data.request.SendChatMessageRequest;
 import org.jackform.innocent.data.result.GetFriendListResult;
 import org.jackform.innocent.data.result.ReceiveChatMessageResult;
+import org.jackform.innocent.data.result.SendChatMessageResult;
 import org.jackform.innocent.utils.DataFetcher;
 import org.jackform.innocent.utils.DebugLog;
 
@@ -79,9 +80,9 @@ public class AsAResult extends IResult.Stub {
 
 
     private void onSendChatMessageCompleted(Bundle result) {
-
-
+        result.setClassLoader(SendChatMessageResult.class.getClassLoader());
     }
+
     private void onReceiveChatMessage(Bundle result) {
         result.setClassLoader(ReceiveChatMessageResult.class.getClassLoader());
         Iterator iter = mResultListeners.entrySet().iterator();

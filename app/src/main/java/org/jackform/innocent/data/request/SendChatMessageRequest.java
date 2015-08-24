@@ -10,10 +10,12 @@ import android.os.Parcelable;
 public class SendChatMessageRequest extends TaskRequest implements Parcelable {
     private String mChatMessage;
     private String mUserJabberID;
+    private String mSendTime;
 
-    public SendChatMessageRequest(String userJabberID,String chatMessage) {
+    public SendChatMessageRequest(String userJabberID,String chatMessage,String sendTime) {
         mChatMessage = chatMessage;
         mUserJabberID = userJabberID;
+        mSendTime = sendTime;
     }
 
     public SendChatMessageRequest(Parcel source) {
@@ -21,6 +23,7 @@ public class SendChatMessageRequest extends TaskRequest implements Parcelable {
         mCaller = source.readInt();
         mChatMessage = source.readString();
         mUserJabberID = source.readString();
+        mSendTime = source.readString();
     }
 
     public static final Creator<SendChatMessageRequest> CREATOR = new Creator<SendChatMessageRequest>() {
@@ -45,12 +48,13 @@ public class SendChatMessageRequest extends TaskRequest implements Parcelable {
         dest.writeInt(mCaller);
         dest.writeString(mChatMessage);
         dest.writeString(mUserJabberID);
+        dest.writeString(mSendTime);
     }
 
     @Override
     public Bundle performDataFetcher() {
         if(null == mDelegator)
             return null;
-        return mDelegator.chat(mUserJabberID,mChatMessage);
+        return mDelegator.chat(mUserJabberID,mChatMessage,mSendTime);
     }
 }

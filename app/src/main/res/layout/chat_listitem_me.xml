@@ -25,5 +25,20 @@
         android:background="@drawable/balloon_back_right"
         android:paddingTop="13dip"
         android:paddingBottom="18dip"      />
+    <org.jackform.customwidget.material.widget.ProgressView
+        android:id="@+id/progress_is_sending_me"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_toLeftOf="@id/chatlist_text_me"
+        android:layout_alignBottom="@id/chatlist_text_me"
+        android:visibility="gone"/>
+    <TextView android:id="@+id/chat_time_me"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/chatlist_text_me"
+        android:layout_alignRight="@id/chatlist_text_me"
+        android:textSize="13sp"
+        android:textColor="@android:color/secondary_text_light"
+        />
 
 </RelativeLayout>

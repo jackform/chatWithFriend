@@ -10,15 +10,42 @@ public class SendChatMessageResult implements Parcelable {
 
     private String mJabberID;
     private String mSendMessage;
+    private String mSendTime;
 
-    public SendChatMessageResult(String jabberID, String sendMessage) {
+    public String getmSendTime() {
+        return mSendTime;
+    }
+
+    public void setmSendTime(String mSendTime) {
+        this.mSendTime = mSendTime;
+    }
+
+    public String getSendMessage() {
+        return mSendMessage;
+    }
+
+    public void setSendMessage(String mSendMessage) {
+        this.mSendMessage = mSendMessage;
+    }
+
+    public String getJabberID() {
+        return mJabberID;
+    }
+
+    public void setJabberID(String mJabberID) {
+        this.mJabberID = mJabberID;
+    }
+
+    public SendChatMessageResult(String jabberID, String sendMessage, String sendTime) {
         mJabberID = jabberID;
         mSendMessage = sendMessage;
+        mSendTime = sendTime;
     }
 
     public SendChatMessageResult(Parcel source) {
         mJabberID = source.readString();
         mSendMessage = source.readString();
+        mSendTime = source.readString();
     }
 
     @Override
@@ -40,5 +67,6 @@ public class SendChatMessageResult implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mJabberID);
         dest.writeString(mSendMessage);
+        dest.writeString(mSendTime);
     }
 }

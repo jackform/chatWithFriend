@@ -19,8 +19,10 @@ import org.jackform.innocent.data.ResponseConstant;
 import org.jackform.innocent.data.request.SendChatMessageRequest;
 import org.jackform.innocent.data.request.SendFileRequest;
 import org.jackform.innocent.data.result.ReceiveChatMessageResult;
+import org.jackform.innocent.data.result.SendChatMessageResult;
 import org.jackform.innocent.utils.DataFetcher;
 import org.jackform.innocent.utils.DebugLog;
+import org.jackform.innocent.utils.TimeUtils;
 import org.jackform.innocent.widget.BaseActivity;
 import org.jackform.innocent.xmpp.XmppMethod;
 import org.jivesoftware.smack.XMPPConnection;
@@ -118,7 +120,16 @@ public class ChatActivity extends BaseActivity implements DataFetcher.ExecuteLis
 
 	void sendChatContenetRequest(String content) {
 		mCurrentSendMessage = content;
-		SendChatMessageRequest sendChatMessageRequest = new SendChatMessageRequest(mFriendJabberID,content);
+		String currentTime = TimeUtils.getCurrentTime();
+		PerChatItem perChatItem = new PerChatItem(true,content,currentTime);
+		//set sending progress
+		perChatItem.setIsSending();
+		mChatContentDatas.add(perChatItem);
+		mAdapter.notifyDataSetChanged();
+		mChatContentList.setSelection(mChatContentDatas.size() - 1);
+		mEdtChatContent.setText("");
+		//send request
+		SendChatMessageRequest sendChatMessageRequest = new SendChatMessageRequest(mFriendJabberID, content, currentTime);
 		mDataFetcher.executeRequest(this, RequestConstant.REQUEST_SEND_CHAT_MESSAGE,sendChatMessageRequest);
 
 	}
@@ -138,18 +149,34 @@ public class ChatActivity extends BaseActivity implements DataFetcher.ExecuteLis
 		switch(responseID) {
 			case ResponseConstant.SEND_CHAT_MESSAGE_ID:
 				if(requestTask.getString(ResponseConstant.CODE).equals(ResponseConstant.SUCCESS_CODE)) {
+					SendChatMessageResult sendChatMessageResult = requestTask.getParcelable(ResponseConstant.PARAMS);
+					String jabberID = sendChatMessageResult.getJabberID();
+					String message = sendChatMessageResult.getSendMessage();
+					String sendTime = sendChatMessageResult.getmSendTime();
+					DebugLog.v("jabberID:"+jabberID);
+					DebugLog.v("message:"+message);
+					DebugLog.v("sendTime:"+sendTime);
+					if(jabberID.startsWith(mFriendJabberID)) {
 
-
-					//TODO if mjabberID equal this session
-					mChatContentDatas.add(new PerChatItem(true, mCurrentSendMessage));
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							mAdapter.notifyDataSetChanged();
-							mChatContentList.setSelection(mChatContentDatas.size() - 1);
-							mEdtChatContent.setText("");
+						for(PerChatItem perChatItem : mChatContentDatas) {
+							if(perChatItem.getDate().equals(sendTime)) {
+								perChatItem.setSendMessageCompleted();
+								runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										mAdapter.notifyDataSetChanged();
+										mChatContentList.setSelection(mChatContentDatas.size() - 1);
+										mEdtChatContent.setText("");
+									}
+								});
+								break;
+							}
 						}
-					});
+
+
+					} else {
+						//TODO if jabber doesn't equal current friendJabberID
+					}
 				}
 				break;
 			case ResponseConstant.RECEIVE_CHAT_MESSAGE_ID:
@@ -159,7 +186,7 @@ public class ChatActivity extends BaseActivity implements DataFetcher.ExecuteLis
 				if(from.startsWith(mFriendJabberID)) {
 					mFriendJabberID = from;
 					DebugLog.v(receiveChatMessageResult.getmReceiveMessage());
-					mChatContentDatas.add(new PerChatItem(false, receiveChatMessageResult.getmReceiveMessage()));
+					mChatContentDatas.add(new PerChatItem(false, receiveChatMessageResult.getmReceiveMessage(),TimeUtils.getCurrentTime()));
 					runOnUiThread(new Runnable() {
 						@Override
 						public void run() {

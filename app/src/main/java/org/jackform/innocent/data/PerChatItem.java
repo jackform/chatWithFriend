@@ -7,10 +7,42 @@ public class PerChatItem {
     private boolean mIsMe;
     private String mChatContent;
     private String mDate;
+    private boolean mIsSending = false;
+    private boolean mIsSendingCompleted = false;
+    private boolean mIsSendingFailure = false;
 
-    public PerChatItem(boolean isMe,String chatContent) {
+    public PerChatItem(boolean isMe,String chatContent,String chatTime) {
        mIsMe = isMe;
         mChatContent = chatContent;
+        mDate = chatTime;
+    }
+
+    public void setIsSending() {
+        mIsSending = true;
+    }
+
+    public void setSendMessageCompleted() {
+        mIsSending = false;
+        mIsSendingCompleted = true;
+        mIsSendingFailure = false;
+    }
+
+    public boolean isSendingFailure() {
+        return !mIsSendingFailure && mIsSendingFailure && !mIsSendingCompleted;
+    }
+
+    public void setmIsSendingFailure() {
+        mIsSending = false;
+        mIsSendingCompleted = false;
+        mIsSendingFailure = true;
+    }
+
+    public boolean isSendingCompleted() {
+        return !mIsSending && mIsSendingCompleted && !mIsSendingFailure;
+    }
+
+    public boolean isSending() {
+        return mIsSending;
     }
 
     public boolean isMe() {

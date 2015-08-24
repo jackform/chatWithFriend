@@ -8,8 +8,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.jackform.customwidget.material.widget.ProgressView;
 import org.jackform.innocent.R;
 import org.jackform.innocent.data.PerChatItem;
+import org.jivesoftware.smackx.workgroup.MetaData;
 
 import java.util.ArrayList;
 
@@ -48,15 +50,31 @@ public class ChatContentListAdapter extends BaseAdapter {
         int chatItemId = isMe ? R.layout.chat_listitem_me : R.layout.chat_listitem_other;
         TextView chatContent;
         ImageView headImage;
+        TextView chatTime;
+        ProgressView progressSendingView;
         convertView = LayoutInflater.from(mContext).inflate(chatItemId,null);
         if(isMe) {
             headImage = (ImageView)convertView.findViewById(R.id.chatlist_image_me);
             chatContent = (TextView)convertView.findViewById(R.id.chatlist_text_me);
+            chatTime = (TextView)convertView.findViewById(R.id.chat_time_me);
+            progressSendingView = (ProgressView) convertView.findViewById(R.id.progress_is_sending_me);
         } else {
             headImage = (ImageView)convertView.findViewById(R.id.chatlist_image_other);
             chatContent = (TextView)convertView.findViewById(R.id.chatlist_text_other);
+            chatTime = (TextView)convertView.findViewById(R.id.chat_time_other);
+            progressSendingView = (ProgressView) convertView.findViewById(R.id.progress_is_sending_other);
+        }
+        if(mData.get(position).isSending()) {
+            progressSendingView.setVisibility(View.VISIBLE);
+        } else if(mData.get(position).isSendingCompleted()) {
+            progressSendingView.setVisibility(View.GONE);
+        } else if(mData.get(position).isSendingFailure()) {
+            //present failure picture and retry
+        } else  {
+            progressSendingView.setVisibility(View.GONE);
         }
         chatContent.setText(mData.get(position).getChatContent());
+        chatTime.setText(mData.get(position).getDate());
         return convertView;
     }
 }

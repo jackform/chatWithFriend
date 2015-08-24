@@ -12,6 +12,7 @@ import org.jackform.innocent.data.FriendList;
 import org.jackform.innocent.data.ResponseConstant;
 import org.jackform.innocent.data.result.GetFriendListResult;
 import org.jackform.innocent.data.result.ReceiveChatMessageResult;
+import org.jackform.innocent.data.result.SendChatMessageResult;
 import org.jackform.innocent.service.MainThreadHandler;
 import org.jackform.innocent.utils.BaseMethod;
 import org.jackform.innocent.utils.DebugLog;
@@ -207,7 +208,7 @@ public class XmppMethod implements BaseMethod{
     }
 
     @Override
-    public Bundle chat(String userJabberID,String chatMessage) {
+    public Bundle chat(String userJabberID,String chatMessage,String sendTime) {
         Bundle res = new Bundle();
         res.putInt(ResponseConstant.ID, ResponseConstant.SEND_CHAT_MESSAGE_ID);
         Chat chat = mChatList.get(userJabberID);
@@ -217,6 +218,8 @@ public class XmppMethod implements BaseMethod{
             e.printStackTrace();
         }
         res.putString(ResponseConstant.CODE,ResponseConstant.SUCCESS_CODE);
+        SendChatMessageResult sendChatMessageResult = new SendChatMessageResult(userJabberID,chatMessage,sendTime);
+        res.putParcelable(ResponseConstant.PARAMS, sendChatMessageResult);
         return res;
     }
 
