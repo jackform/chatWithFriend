@@ -1,9 +1,6 @@
 package org.jackform.innocent.data;
 
-import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
-
-import org.jackform.innocent.FriendInfo;
 
 import java.io.Serializable;
 import java.util.List;

@@ -2,39 +2,251 @@ package org.jackform.innocent.activity;
 
 
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.view.Window;
+import android.os.Environment;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 
 import org.jackform.innocent.R;
+import org.jackform.innocent.adapter.ChatContentListAdapter;
+import org.jackform.innocent.data.PerChatItem;
+import org.jackform.innocent.data.RequestConstant;
+import org.jackform.innocent.data.ResponseConstant;
+import org.jackform.innocent.data.request.SendChatMessageRequest;
+import org.jackform.innocent.data.request.SendFileRequest;
+import org.jackform.innocent.data.result.ReceiveChatMessageResult;
+import org.jackform.innocent.utils.DataFetcher;
+import org.jackform.innocent.utils.DebugLog;
 import org.jackform.innocent.widget.BaseActivity;
+import org.jackform.innocent.xmpp.XmppMethod;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.filetransfer.FileTransferListener;
+import org.jivesoftware.smackx.filetransfer.FileTransferManager;
+import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
+import org.jivesoftware.smackx.filetransfer.IncomingFileTransfer;
+import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
 
-public class ChatActivity extends BaseActivity {
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
+public class ChatActivity extends BaseActivity implements DataFetcher.ExecuteListener{
 	private final static String TAG = "CHAT";
+	private String mFriendJabberID;
+	private String mFriendName;
+	private Toolbar mStringToolBar;
+	private ListView mChatContentList;
+	private ChatContentListAdapter mAdapter;
+	private ArrayList<PerChatItem> mChatContentDatas;
+	private String  mCurrentSendMessage;
+	private Toolbar mToolBar;
+	private Button mBtnSend;
+	private EditText mEdtChatContent;
 	/*
 	private String mFriend;
-	private Chat mChat;
+	private Chat ToolbarmChat;
 	private ChatManager chatManager;
-*/
+    */
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-//		chatManager.removeChatListener(mChatManagerListener);
-//		mChat.removeMessageListener(mMessageListener);
-
+		if(this.isFinishing()) {
+			DebugLog.v("onPause,finishing");
+			mDataFetcher.removeExecuteListener(this.getCaller());
+		} else {
+			DebugLog.v("onPause,but not finishing");
+		}
 	}
+
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_chat);
+		mToolBar = (Toolbar)findViewById(R.id.tool_bar);
+		setSupportActionBar(mToolBar);
+        mToolBar.setNavigationIcon(R.mipmap.nav_btn_back);
+		mToolBar.setNavigationOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				finish();
+			}
+		});
+
+		mFriendJabberID = getIntent().getStringExtra("FRIEND_INFO");
+		mFriendName = getIntent().getStringExtra("FRIEND_NAME");
+		DebugLog.v(mFriendJabberID);
+		DebugLog.v("username is" + mFriendName);
+		mToolBar.setSubtitle("您正在与" + mFriendName + "聊天中");
+
+		mChatContentList = (ListView)findViewById(R.id.main_chat_form);
+		mChatContentDatas = new ArrayList<>();
+		mAdapter = new ChatContentListAdapter(this,mChatContentDatas);
+		mChatContentList.setAdapter(mAdapter);
+
+		mDataFetcher.addExecuteListener(this);
+
+		mEdtChatContent = (EditText)findViewById(R.id.chat_content);
+
+
+		mBtnSend = (Button)findViewById(R.id.btn_send);
+		mBtnSend.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String sendChatContent = mEdtChatContent.getText().toString();
+                sendChatContenetRequest(sendChatContent);
+			}
+		});
 
 //		setContentView(R.layout.activity_chat);
 //		mFriend = getIntent().getStringExtra("FRIEND_INFO");
 //		chatManager = XmppUtils.getConnection().getChatManager();
 //		mChat = chatManager.createChat(mFriend, null);
 //		chatManager.addChatListener(mChatManagerListener);
+	}
+
+	void sendChatContenetRequest(String content) {
+		mCurrentSendMessage = content;
+		SendChatMessageRequest sendChatMessageRequest = new SendChatMessageRequest(mFriendJabberID,content);
+		mDataFetcher.executeRequest(this, RequestConstant.REQUEST_SEND_CHAT_MESSAGE,sendChatMessageRequest);
+
+	}
+
+	@Override
+	public int getCaller() {
+		return this.hashCode();
+	}
+
+
+
+
+
+	@Override
+	public void onExecuteResult(int responseID, Bundle requestTask) {
+		DebugLog.v("enter the chat activity onExecuteResult");
+		switch(responseID) {
+			case ResponseConstant.SEND_CHAT_MESSAGE_ID:
+				if(requestTask.getString(ResponseConstant.CODE).equals(ResponseConstant.SUCCESS_CODE)) {
+
+
+					//TODO if mjabberID equal this session
+					mChatContentDatas.add(new PerChatItem(true, mCurrentSendMessage));
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							mAdapter.notifyDataSetChanged();
+							mChatContentList.setSelection(mChatContentDatas.size()-1);
+						}
+					});
+				}
+				break;
+			case ResponseConstant.RECEIVE_CHAT_MESSAGE_ID:
+				ReceiveChatMessageResult receiveChatMessageResult = requestTask.getParcelable(ResponseConstant.PARAMS);
+				String from = receiveChatMessageResult.getmUserJabberID();
+				DebugLog.v(from);
+				if(from.startsWith(mFriendJabberID)) {
+					mFriendJabberID = from;
+					DebugLog.v(receiveChatMessageResult.getmReceiveMessage());
+					mChatContentDatas.add(new PerChatItem(false, receiveChatMessageResult.getmReceiveMessage()));
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							mAdapter.notifyDataSetChanged();
+							mChatContentList.setSelection(mChatContentDatas.size() - 1);
+						}
+					});
+
+					/* send file
+					String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/test.txt";
+					SendFileRequest sendFileRequest = new SendFileRequest(mFriendJabberID,filePath);
+					mDataFetcher.executeRequest(this,RequestConstant.REQUEST_SEND_FILE,sendFileRequest);
+					*/
+				}
+				break;
+			default:
+				break;
+		}
+
+	}
+
+	public void createFile() {
+		DebugLog.v(""+getFilesDir());
+		DebugLog.v(""+Environment.getDownloadCacheDirectory().getAbsolutePath());
+		DebugLog.v(""+Environment.getDataDirectory().getAbsolutePath());
+		DebugLog.v(""+Environment.getExternalStorageDirectory().getAbsolutePath());
+		DebugLog.v(""+Environment.getExternalStoragePublicDirectory("pub_test").getAbsolutePath());
+		String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+		File file = new File(path,"test.txt");
+		if(!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void receiveFile() {
+		new Thread() {
+			public void run() {
+
+				final String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+				XMPPConnection connection = XmppMethod.getInstance().getConnection();
+				try {
+					connection.connect();
+				} catch (XMPPException e) {
+					e.printStackTrace();
+				}
+				XmppMethod.getInstance().login("jackform", "awfityvi");
+				FileTransferManager manager = new FileTransferManager(XmppMethod.getInstance().getConnection());
+				OutgoingFileTransfer transfer = manager.createOutgoingFileTransfer(mFriendJabberID);
+				try {
+					transfer.sendFile(new File(path),"data backup");
+				} catch (XMPPException e) {
+					e.printStackTrace();
+				}
+				manager.addFileTransferListener(new FileTransferListener() {
+					@Override
+					public void fileTransferRequest(FileTransferRequest fileTransferRequest) {
+						DebugLog.v("has file incoming");
+						IncomingFileTransfer transfer = fileTransferRequest.accept();
+						try {
+							transfer.recieveFile(new File(path, "a.txt"));
+						} catch (XMPPException e) {
+							e.printStackTrace();
+						}
+
+					}
+				});
+			}
+
+		}.start();
+
+	}
+	private void sendFile(String user,XMPPConnection conn,File file) throws XMPPException {
+		FileTransferManager manager = new FileTransferManager(conn);
+		OutgoingFileTransfer transfer = manager.createOutgoingFileTransfer(user);
+//		File afile = new File(Environmentonment.getExternalStoragePublicDirectory());
+		transfer.sendFile(file, "data backup");
+		manager.addFileTransferListener(new FileTransferListener() {
+			@Override
+			public void fileTransferRequest(FileTransferRequest request) {
+				try {
+					DebugLog.v("has file coming!");
+					IncomingFileTransfer transfer = request.accept();
+					transfer.recieveFile(new File("complete_work.txt"));
+				} catch (XMPPException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
 	}
 
 	/*

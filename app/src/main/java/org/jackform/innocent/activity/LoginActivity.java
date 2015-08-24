@@ -13,6 +13,7 @@ import org.jackform.innocent.data.RequestConstant;
 import org.jackform.innocent.data.ResponseConstant;
 import org.jackform.innocent.data.request.LoginTaskRequest;
 import org.jackform.innocent.utils.DataFetcher;
+import org.jackform.innocent.utils.DebugLog;
 import org.jackform.innocent.widget.BaseActivity;
 
 public class LoginActivity extends BaseActivity implements DataFetcher.ExecuteListener {
@@ -20,6 +21,12 @@ public class LoginActivity extends BaseActivity implements DataFetcher.ExecuteLi
     private EditText mEdtAccount;
     private EditText mEdtPassword;
     private TextView mRegister;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mDataFetcher.removeExecuteListener(this.getCaller());
+    }
 
     @Override
     public int getCaller() {

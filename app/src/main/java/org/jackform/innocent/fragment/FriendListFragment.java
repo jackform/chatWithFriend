@@ -13,6 +13,7 @@ import android.widget.ExpandableListView;
 
 import com.google.gson.Gson;
 
+import org.jackform.innocent.data.FriendInfo;
 import org.jackform.innocent.R;
 import org.jackform.innocent.activity.ChatActivity;
 import org.jackform.innocent.adapter.FriendListExpandableAdapter;
@@ -23,7 +24,6 @@ import org.jackform.innocent.data.request.GetFriendListRequest;
 import org.jackform.innocent.data.result.GetFriendListResult;
 import org.jackform.innocent.utils.DataFetcher;
 import org.jackform.innocent.utils.DebugLog;
-import org.jackform.innocent.xmpp.XmppMethod;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterGroup;
 
@@ -49,6 +49,12 @@ public class FriendListFragment extends BaseFragment implements DataFetcher.Exec
 		Log.v("hahaha", "onAttach");
 	}
 
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		DebugLog.v("onDetach");
+        mDataFetcher.removeExecuteListener(this.getCaller());
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater,
@@ -67,10 +73,12 @@ public class FriendListFragment extends BaseFragment implements DataFetcher.Exec
 					public boolean onChildClick(ExpandableListView parent,
 												View v, int groupPosition, int childPosition,
 												long id) {
-						Object child = friendListAdapter.getChild(groupPosition, childPosition);
+						FriendInfo child = (FriendInfo)friendListAdapter.getChild(groupPosition, childPosition);
 						Intent intent = new Intent(mContext, ChatActivity.class);
-						Log.v("", child.toString());
-						intent.putExtra("FRIEND_INFO", child.toString());
+						DebugLog.v(child.getmJabberID());
+						DebugLog.v(child.getmUserName());
+						intent.putExtra("FRIEND_INFO", child.getmJabberID());
+						intent.putExtra("FRIEND_NAME", child.getmUserName());
 						startActivity(intent);
 						return false;
 					}
@@ -126,8 +134,15 @@ public class FriendListFragment extends BaseFragment implements DataFetcher.Exec
 				GetFriendListResult getFriendListResult = requestTask.getParcelable(ResponseConstant.PARAMS);
 				String jsonStr = getFriendListResult.getmJsonFriendList();
 				Gson gson = new Gson();
-				DebugLog.v("the return friend list json is "+jsonStr);
-				FriendList friendList = gson.fromJson(jsonStr,FriendList.class);
+				DebugLog.v("the return friend list json is " + jsonStr);
+				final FriendList friendList = gson.fromJson(jsonStr,FriendList.class);
+				friendListAdapter.setData(friendList);
+				((Activity)mContext).runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						friendListAdapter.notifyDataSetChanged();
+					}
+				});
 
 			break;
 		}

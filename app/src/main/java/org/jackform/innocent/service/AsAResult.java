@@ -6,11 +6,15 @@ import android.util.Log;
 
 import org.jackform.innocent.IResult;
 import org.jackform.innocent.data.ResponseConstant;
+import org.jackform.innocent.data.request.SendChatMessageRequest;
 import org.jackform.innocent.data.result.GetFriendListResult;
+import org.jackform.innocent.data.result.ReceiveChatMessageResult;
 import org.jackform.innocent.utils.DataFetcher;
 import org.jackform.innocent.utils.DebugLog;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by jackform on 15-7-2.
@@ -51,6 +55,13 @@ public class AsAResult extends IResult.Stub {
                 break;
             case ResponseConstant.GET_FRIEND_LIST_ID:
                 onGetFriendListCompleted(result);
+                break;
+            case ResponseConstant.SEND_CHAT_MESSAGE_ID:
+                onSendChatMessageCompleted(result);
+                break;
+            case ResponseConstant.RECEIVE_CHAT_MESSAGE_ID:
+                onReceiveChatMessage(result);
+                return;
             case ResponseConstant.BASE_ID:
             default:
                 //TODO deal invalid requestID
@@ -63,6 +74,21 @@ public class AsAResult extends IResult.Stub {
             return ;
         } else {
             excuteListener.onExecuteResult(responseID, result);
+        }
+    }
+
+
+    private void onSendChatMessageCompleted(Bundle result) {
+
+
+    }
+    private void onReceiveChatMessage(Bundle result) {
+        result.setClassLoader(ReceiveChatMessageResult.class.getClassLoader());
+        Iterator iter = mResultListeners.entrySet().iterator();
+        while(iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            DataFetcher.ExecuteListener r = (DataFetcher.ExecuteListener) entry.getValue();
+            r.onExecuteResult(result.getInt(ResponseConstant.ID),result);
         }
     }
 

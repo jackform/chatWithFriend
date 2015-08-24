@@ -16,6 +16,9 @@ public interface ResponseConstant {
     int LOGIN_ID = BASE_ID + 3;
     int REGISTER_ID = BASE_ID + 4;
     int GET_FRIEND_LIST_ID = BASE_ID + 5;
+    int SEND_CHAT_MESSAGE_ID = BASE_ID + 6;
+    int RECEIVE_CHAT_MESSAGE_ID = BASE_ID + 7;
+    int SEND_FILE_ID = BASE_ID + 8;
 
 
 

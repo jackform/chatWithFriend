@@ -3,9 +3,18 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/ColorPrimary"
+        android:theme="@style/CustomActionBarTheme"
+        android:elevation="4dp">
+    </android.support.v7.widget.Toolbar>
     <RelativeLayout android:id="@+id/bottom_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:color/white"
         android:layout_alignParentBottom="true">
 
         <ImageView android:id="@+id/emoji"
@@ -19,16 +28,17 @@
             android:layout_marginTop="3dp"
             android:layout_marginBottom="3dp" />
 
-        <ImageView android:id="@+id/btn_send"
+        <Button android:id="@+id/btn_send"
             android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_height="120dp"
             android:layout_marginEnd="16dp"
-            android:background="@mipmap/ic_launcher"
-            android:contentDescription="@null"
+            android:background="@drawable/chat_button_fillet_shape"
             android:layout_alignParentEnd="true"
             android:layout_alignBottom="@+id/chat_content"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="3dp"
-            android:layout_marginBottom="3dp" />
+            android:layout_marginBottom="3dp"
+            android:text="发送"/>
 
         <EditText android:id="@+id/chat_content"
             android:layout_width="match_parent"
@@ -39,13 +49,14 @@
             android:layout_alignParentEnd="false"
             android:layout_marginTop="3dp"
             android:layout_marginBottom="3dp"
-            android:textSize="15sp" />
+            android:background="@drawable/edit_fillet_shape"
+            android:textSize="13sp" />
     </RelativeLayout>
 
     <ListView android:id="@+id/main_chat_form"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_height="match_parent"
         android:layout_above="@id/bottom_view"
-        android:layout_alignParentStart="true" />
+        android:layout_below="@id/tool_bar"
+        />
 </RelativeLayout>

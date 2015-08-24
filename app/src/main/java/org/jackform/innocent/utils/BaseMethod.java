@@ -13,7 +13,8 @@ public interface BaseMethod {
     Bundle connect();
     Bundle login(String account,String password);
     Bundle register(String account ,String password,byte[] imageHeader);
-    Bundle chat();
+    Bundle chat(String userJabberID,String chatMessage);
     Bundle getFriendList();
+    Bundle sendFile(String toUserJabberID,String filePath);
 
 }

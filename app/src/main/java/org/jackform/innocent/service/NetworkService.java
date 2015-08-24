@@ -11,13 +11,15 @@ import android.util.Log;
 
 import org.jackform.innocent.INetworkService;
 import org.jackform.innocent.IResult;
-import org.jackform.innocent.activity.RegisterActivity;
 import org.jackform.innocent.data.RequestConstant;
 import org.jackform.innocent.data.ResponseConstant;
 import org.jackform.innocent.data.request.GetFriendListRequest;
 import org.jackform.innocent.data.request.LoginTaskRequest;
 import org.jackform.innocent.data.request.RegisterTaskRequest;
+import org.jackform.innocent.data.request.SendChatMessageRequest;
+import org.jackform.innocent.data.request.SendFileRequest;
 import org.jackform.innocent.data.request.UnBindTaskRequest;
+import org.jackform.innocent.utils.DebugLog;
 import org.jackform.innocent.xmpp.XmppExecutor;
 
 import java.util.HashMap;
@@ -45,6 +47,15 @@ public class NetworkService extends Service {
                         e.printStackTrace();
                     }
                     break;
+                case ResponseConstant.RECEIVE_CHAT_MESSAGE_ID:
+                    DebugLog.v("Handler");
+                    Bundle bundle = (Bundle)msg.obj;
+                    try {
+                        mResult.onResult(ResponseConstant.RECEIVE_CHAT_MESSAGE_ID,bundle);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                    break;
                 default:
                     break;
             }
@@ -63,7 +74,8 @@ public class NetworkService extends Service {
 
     private IResult mResult;
 
-    private Handler mHandler = new Handler(mCallback);
+    private Handler mHandler;// = new Handler(mCallback);
+
 
     private INetworkService.Stub mBinder = new INetworkService.Stub() {
 
@@ -78,8 +90,9 @@ public class NetworkService extends Service {
 
             Bundle response = new Bundle();
             response.putInt(ResponseConstant.ID,ResponseConstant.INIT_ID);
-            response.putString(ResponseConstant.CODE,ResponseConstant.SUCCESS_CODE);
+            response.putString(ResponseConstant.CODE, ResponseConstant.SUCCESS_CODE);
             mResult = result;
+            MainThreadHandler.getInstance().setResult(result);
             result.onResult(ResponseConstant.INIT_ID,response);
 
 //            Message m = Message.obtain();
@@ -118,11 +131,19 @@ public class NetworkService extends Service {
                     GetFriendListRequest getFriendListRequest = request.getParcelable(RequestConstant.REQUEST_PARAMS);
                     XmppExecutor.getInstance(NetworkService.this).submit(getFriendListRequest);
                     break;
+                case RequestConstant.REQUEST_SEND_CHAT_MESSAGE:
+                    request.setClassLoader(SendChatMessageRequest.class.getClassLoader());
+                    SendChatMessageRequest sendChatMessageRequest = request.getParcelable(RequestConstant.REQUEST_PARAMS);
+                    XmppExecutor.getInstance(NetworkService.this).submit(sendChatMessageRequest);
+                    break;
+                case RequestConstant.REQUEST_SEND_FILE:
+                    request.setClassLoader(SendFileRequest.class.getClassLoader());
+                    SendFileRequest sendFileRequest = request.getParcelable(RequestConstant.REQUEST_PARAMS);
+                    XmppExecutor.getInstance(NetworkService.this).submit(sendFileRequest);
+                    break;
                 case RequestConstant.REQUEST_BASE:
-
                 default:
-                    //TODO invalid request ID
-
+                    //TODO invalid request
             }
 
         }
@@ -140,6 +161,7 @@ public class NetworkService extends Service {
 
     @Override
     public void onCreate() {
+        mHandler = new Handler(getMainLooper(),mCallback);
         super.onCreate();
     }
 

@@ -1,12 +1,8 @@
 package org.jackform.innocent.data;
 
-import android.os.Debug;
-import android.util.Log;
-
 import com.google.gson.annotations.SerializedName;
 
 
-import org.jackform.innocent.FriendInfo;
 import org.jackform.innocent.utils.DebugLog;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;

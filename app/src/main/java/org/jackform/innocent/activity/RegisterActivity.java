@@ -30,6 +30,7 @@ import org.jackform.innocent.data.RequestConstant;
 import org.jackform.innocent.data.ResponseConstant;
 import org.jackform.innocent.data.request.RegisterTaskRequest;
 import org.jackform.innocent.utils.DataFetcher;
+import org.jackform.innocent.utils.DebugLog;
 import org.jackform.innocent.widget.AccountEditText;
 import org.jackform.innocent.widget.BaseActivity;
 import org.jackform.innocent.widget.PasswordEditText;
@@ -108,6 +109,13 @@ public class RegisterActivity extends BaseActivity implements DataFetcher.Execut
 //			task.start();
 		}
 	};
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mDataFetcher.removeExecuteListener(this.getCaller());
+    }
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
