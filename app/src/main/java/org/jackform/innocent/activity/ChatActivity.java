@@ -5,6 +5,7 @@ package org.jackform.innocent.activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -100,6 +101,10 @@ public class ChatActivity extends BaseActivity implements DataFetcher.ExecuteLis
 			@Override
 			public void onClick(View v) {
 				String sendChatContent = mEdtChatContent.getText().toString();
+				if(TextUtils.isEmpty(sendChatContent)) {
+					toast("发送消息不能为空");
+					return;
+				}
                 sendChatContenetRequest(sendChatContent);
 			}
 		});
@@ -141,7 +146,8 @@ public class ChatActivity extends BaseActivity implements DataFetcher.ExecuteLis
 						@Override
 						public void run() {
 							mAdapter.notifyDataSetChanged();
-							mChatContentList.setSelection(mChatContentDatas.size()-1);
+							mChatContentList.setSelection(mChatContentDatas.size() - 1);
+							mEdtChatContent.setText("");
 						}
 					});
 				}

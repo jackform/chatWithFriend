@@ -9,7 +9,7 @@
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/ColorPrimary"
+        android:background="@drawable/primary_color"
         android:theme="@style/CustomActionBarTheme"
         android:elevation="4dp"
         android:navigationIcon="@mipmap/nav_btn_back">
@@ -24,7 +24,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/background_dark">
+        android:background="@drawable/primary_color">
     	<RadioButton android:id="@+id/friendlist_tab"
             style="@style/tab_button"  
             android:text="好友"
