@@ -4,9 +4,12 @@ import com.google.gson.annotations.SerializedName;
 
 
 import org.jackform.innocent.utils.DebugLog;
+import org.jackform.innocent.xmpp.XmppMethod;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterGroup;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.packet.VCard;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,6 +52,8 @@ public class FriendList {
                 friendInfo.setmUserName(rosterEntries.get(j).getName());
                 DebugLog.v(rosterEntries.get(j).getName());
                 friendInfo.setmJabberID(rosterEntries.get(j).getUser());
+                String imagePath =  XmppMethod.getInstance().getHeaderImagePaht(friendInfo.getmJabberID());
+                friendInfo.setmHeaderImagePath(imagePath);
                 friendInfos.add(friendInfo);
             }
             friendGroup.setmFriendInfo(friendInfos);
@@ -56,8 +61,6 @@ public class FriendList {
         }
 
     }
-
-
 
     public List<FriendGroup> getmFriendList() {
         return mFriendList;

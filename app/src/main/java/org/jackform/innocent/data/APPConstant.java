@@ -9,7 +9,6 @@ public interface APPConstant {
     String KEY_USERNAME = "username";
     String KEY_JABBERID = "jabberID";
     String KEY_ROSTER = "roster";
-
-
+    String KEY_HEADER_IMAGE_PATH = "headerImagePath";
 
 }

@@ -1,6 +1,7 @@
 package org.jackform.innocent.xmpp;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.DebugUtils;
@@ -48,7 +49,11 @@ import org.jivesoftware.smackx.filetransfer.StreamNegotiator;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.smackx.provider.StreamInitiationProvider;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -320,5 +325,38 @@ public class XmppMethod implements BaseMethod{
         }
         res.putString(ResponseConstant.CODE, ResponseConstant.SUCCESS_CODE);
         return res;
+    }
+
+
+    public String getHeaderImagePaht(String user) {
+        VCard card = new VCard();
+        try {
+            card.load(mConnect,user);
+        } catch(XMPPException e) {
+            e.printStackTrace();
+        }
+        ByteArrayInputStream bais = new ByteArrayInputStream(card.getAvatar());
+
+        byte buf[] = new byte[1024];
+        String fileName =  Environment.getExternalStorageDirectory() + "/.IMTONG/Vcard/Head/"+user+".png";
+        File download = new File(fileName);
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(download);
+            do {
+                int numread = bais.read(buf);
+                if (numread == -1) {
+                    break;
+                }
+                fos.write(buf, 0, numread);
+            } while (true);
+            bais.close();
+            fos.close();
+        } catch(FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return fileName;
     }
 }
