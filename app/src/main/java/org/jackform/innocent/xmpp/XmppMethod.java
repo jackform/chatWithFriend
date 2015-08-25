@@ -161,7 +161,7 @@ public class XmppMethod implements BaseMethod{
     }
 
     @Override
-    public Bundle register(String account,String password,byte[] headerImage) {
+    public Bundle register(String account,String password,byte[] headerImage,String age,String male) {
         Bundle res = new Bundle();
         res.putInt(ResponseConstant.ID,ResponseConstant.REGISTER_ID);
         Registration reg = new Registration();
@@ -199,6 +199,8 @@ public class XmppMethod implements BaseMethod{
                 vcard.setEncodedImage(encodedImage);
                 vcard.setField("PHOTO", "<TYPE>image/jpg</TYPE><BINVAL>"
                         + encodedImage + "</BINVAL>", true);
+                vcard.setFirstName(male);
+                vcard.setLastName(age);
                 vcard.save(mConnect);
                 mConnect.disconnect();
                 isConnected = false;
@@ -327,6 +329,35 @@ public class XmppMethod implements BaseMethod{
         return res;
     }
 
+    public String getNickName(String user) {
+        VCard card = new VCard();
+        try {
+            card.load(mConnect,user);
+        } catch(XMPPException e) {
+            e.printStackTrace();
+        }
+        return card.getNickName();
+    }
+
+    public String getMale(String user) {
+        VCard card = new VCard();
+        try {
+            card.load(mConnect,user);
+        } catch(XMPPException e) {
+            e.printStackTrace();
+        }
+        return card.getFirstName();
+    }
+
+    public String getAge(String user) {
+        VCard card = new VCard();
+        try {
+            card.load(mConnect,user);
+        } catch(XMPPException e) {
+            e.printStackTrace();
+        }
+        return card.getLastName();
+    }
 
     public String getHeaderImagePaht(String user) {
         VCard card = new VCard();
@@ -338,7 +369,12 @@ public class XmppMethod implements BaseMethod{
         ByteArrayInputStream bais = new ByteArrayInputStream(card.getAvatar());
 
         byte buf[] = new byte[1024];
-        String fileName =  Environment.getExternalStorageDirectory() + "/.IMTONG/Vcard/Head/"+user+".png";
+        String dirPath = Environment.getExternalStorageDirectory() + "/.IMTONG/Vcard/Head/";
+        File dir = new File(dirPath);
+        if(!dir.exists()) {
+            dir.mkdirs();
+        }
+        String fileName =  dirPath + user + ".png";
         File download = new File(fileName);
         FileOutputStream fos = null;
         try {

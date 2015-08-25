@@ -31,6 +31,50 @@ public class MainTabActivity extends BaseActivity implements DataFetcher.Execute
     private int lastClickId;
     private Toolbar mToolBar;
     private String mAccount;
+    private String mJabberID;
+    private String mImageHeaderPath;
+    private String mMale;
+    private String mAge;
+
+    public String getmAccount() {
+        return mAccount;
+    }
+
+    public void setmAccount(String mAccount) {
+        this.mAccount = mAccount;
+    }
+
+    public String getmJabberID() {
+        return mJabberID;
+    }
+
+    public void setmJabberID(String mJabberID) {
+        this.mJabberID = mJabberID;
+    }
+
+    public String getmImageHeaderPath() {
+        return mImageHeaderPath;
+    }
+
+    public void setmImageHeaderPath(String mImageHeaderPath) {
+        this.mImageHeaderPath = mImageHeaderPath;
+    }
+
+    public String getmMale() {
+        return mMale;
+    }
+
+    public void setmMale(String mMale) {
+        this.mMale = mMale;
+    }
+
+    public String getmAge() {
+        return mAge;
+    }
+
+    public void setmAge(String mAge) {
+        this.mAge = mAge;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

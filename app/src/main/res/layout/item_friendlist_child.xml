@@ -5,30 +5,31 @@
 	android:background="@drawable/list_child_layer"
 	android:descendantFocusability="blocksDescendants" >
   
-    <ImageButton
+    <ImageView
 		android:id="@+id/ct_photo"
 		android:layout_width="52dp"
 		android:layout_height="52dp"
 		android:layout_margin="5dp" />
+
     <TextView
 		android:id="@+id/ct_name"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:padding="5dp"
 		android:maxLength="7"
-		android:textSize="7sp"
+		android:textSize="10sp"
 		android:textStyle="bold"
 		android:text="为你我受冷风吹"
+		android:layout_marginTop="5dp"
 		android:layout_toRightOf="@id/ct_photo"
 		android:layout_alignTop="@id/ct_photo" />
     <TextView
 		android:id="@+id/ct_sign"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:textSize="5sp"
+		android:layout_marginTop="5dp"
+		android:textSize="8sp"
 		android:textColor="#ff666666"
 		android:text="为什么受伤的总是我"
-		android:padding="5dp"
 		android:layout_toRightOf="@id/ct_photo"
 		android:layout_alignBottom="@id/ct_photo" />
 </RelativeLayout>

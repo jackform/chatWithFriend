@@ -16,6 +16,28 @@ public class FriendInfo {
     @SerializedName(APPConstant.KEY_HEADER_IMAGE_PATH)
     String mHeaderImagePath;
 
+    @SerializedName(APPConstant.KEY_MALE)
+    String mMale;
+
+    @SerializedName(APPConstant.KEY_AGE)
+    String mAge;
+
+    public String getmMale() {
+        return mMale;
+    }
+
+    public void setmMale(String mMale) {
+        this.mMale = mMale;
+    }
+
+    public String getmAge() {
+        return mAge;
+    }
+
+    public void setmAge(String mAge) {
+        this.mAge = mAge;
+    }
+
     public String getmUserName() {
         return mUserName;
     }

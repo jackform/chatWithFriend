@@ -32,6 +32,7 @@ import org.jackform.innocent.data.request.RegisterTaskRequest;
 import org.jackform.innocent.utils.DataFetcher;
 import org.jackform.innocent.utils.DebugLog;
 import org.jackform.innocent.widget.AccountEditText;
+import org.jackform.innocent.widget.AgeEditText;
 import org.jackform.innocent.widget.BaseActivity;
 import org.jackform.innocent.widget.PasswordEditText;
 
@@ -42,6 +43,7 @@ import java.io.IOException;
 import cropper.CropImageView;
 
 import android.content.CursorLoader;
+import android.widget.RadioButton;
 
 public class RegisterActivity extends BaseActivity implements DataFetcher.ExecuteListener {
 	private static final String TAG = "RegisterActivity";
@@ -56,6 +58,8 @@ public class RegisterActivity extends BaseActivity implements DataFetcher.Execut
 	private AccountEditText mEtAccount;
 	private PasswordEditText mEtPassword;
 	private PasswordEditText mEtRePassword;
+	private AgeEditText mEtAge;
+	private RadioButton mMale;
 
 	private Handler mHandler = new Handler() {
 		@Override
@@ -86,6 +90,8 @@ public class RegisterActivity extends BaseActivity implements DataFetcher.Execut
 			String account = mEtAccount.getText().toString();
 			String password = mEtPassword.getText().toString();
 			String rePassword = mEtRePassword.getText().toString();
+			String age = mEtAge.getText().toString();
+			String male = mMale.isChecked() ? "男" : "女";
 
 			if (TextUtils.isEmpty(account)) {
 				toast("必须设置用户名");
@@ -103,7 +109,13 @@ public class RegisterActivity extends BaseActivity implements DataFetcher.Execut
 				toast("两次输入的密码不一致");
 				return;
 			}
-			requestRegister(account,password);
+
+			if(TextUtils.isEmpty(age)) {
+				toast("请输入年龄");
+				return;
+			}
+
+			requestRegister(account,password,age,male);
 //			SubmitRegisterInfoTask task = new SubmitRegisterInfoTask(account,
 //					password);
 //			task.start();
@@ -131,6 +143,8 @@ public class RegisterActivity extends BaseActivity implements DataFetcher.Execut
 		mEtAccount = (AccountEditText) findViewById(R.id.et_register_account);
 		mEtPassword = (PasswordEditText) findViewById(R.id.et_register_password);
 		mEtRePassword = (PasswordEditText) findViewById(R.id.et_regiter_repeat_password);
+		mEtAge = (AgeEditText) findViewById(R.id.et_age);
+		mMale = (RadioButton) findViewById(R.id.male);
 
 		final String account = mEtAccount.getText().toString();
 		final String password = mEtPassword.getText().toString();
@@ -144,7 +158,7 @@ public class RegisterActivity extends BaseActivity implements DataFetcher.Execut
 		mCaremaChoose.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				requestRegister(account, password);
+//				requestRegister(account, password);
 
 			}
 		});
@@ -153,7 +167,7 @@ public class RegisterActivity extends BaseActivity implements DataFetcher.Execut
 	}
 
 
-	private void requestRegister(final String account,final String password) {
+	private void requestRegister(final String account,final String password,final String age, final String male) {
 		new Thread() {
 			@Override
 			public void run() {
@@ -162,7 +176,7 @@ public class RegisterActivity extends BaseActivity implements DataFetcher.Execut
 				cropedBitmap
 						.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 				bytes = baos.toByteArray();
-				RegisterTaskRequest request = new RegisterTaskRequest(account,password,bytes);
+				RegisterTaskRequest request = new RegisterTaskRequest(account,password,bytes,age,male);
 				mDataFetcher.executeRequest(RegisterActivity.this,RequestConstant.REQUEST_REGISTER,request);
 			}
 		}.start();

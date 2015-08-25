@@ -12,7 +12,8 @@ public class RegisterTaskRequest extends TaskRequest implements Parcelable{
     private String registerAccount;
     private String registerPassword;
     private byte [] headerImage;
-
+    private String  age;
+    private String  male;
     public String getAccount() {
         return registerAccount;
     }
@@ -28,14 +29,16 @@ public class RegisterTaskRequest extends TaskRequest implements Parcelable{
     @Override
     public Bundle performDataFetcher() {
         if(null != mDelegator)
-            return mDelegator.register(registerAccount,registerPassword,headerImage);
+            return mDelegator.register(registerAccount,registerPassword,headerImage,age,male);
         return null;
     }
 
-    public RegisterTaskRequest(String account,String password,byte[] headerBytes) {
+    public RegisterTaskRequest(String account,String password,byte[] headerBytes,String age,String male) {
         registerAccount = account;
         registerPassword = password;
         headerImage = headerBytes;
+        this.age = age;
+        this.male = male;
     }
 
     public RegisterTaskRequest(Parcel source)
@@ -47,6 +50,8 @@ public class RegisterTaskRequest extends TaskRequest implements Parcelable{
         int byteLen = source.readInt();
         headerImage = new byte [byteLen];
         source.readByteArray(headerImage);
+        age  = source.readString();
+        male = source.readString();
     }
 
     public static final Creator<RegisterTaskRequest> CREATOR = new Creator<RegisterTaskRequest>() {
@@ -73,5 +78,7 @@ public class RegisterTaskRequest extends TaskRequest implements Parcelable{
         dest.writeString(registerPassword);
         dest.writeInt(headerImage.length);
         dest.writeByteArray(headerImage);
+        dest.writeString(age);
+        dest.writeString(male);
     }
 }

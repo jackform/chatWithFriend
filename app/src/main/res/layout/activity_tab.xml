@@ -27,20 +27,16 @@
         android:background="@drawable/primary_color">
     	<RadioButton android:id="@+id/friendlist_tab"
             style="@style/tab_button"  
-            android:text="好友"
+            android:text="好友列表"
             android:drawableTop="@drawable/tab_cards_selector" 
             android:checked="true"/>  
        	<RadioButton android:id="@+id/tab2"
             style="@style/tab_button"  
-            android:text="微博" 
+            android:text="动态加载"
             android:drawableTop="@drawable/tab_cards_selector"/>
        	<RadioButton android:id="@+id/tab3"
             style="@style/tab_button"  
-            android:text="微博" 
+            android:text="个人信息"
             android:drawableTop="@drawable/tab_cards_selector"/>
-        <RadioButton android:id="@+id/tab4"
-            style="@style/tab_button"  
-            android:text="微博" 
-            android:drawableTop="@drawable/tab_cards_selector"/>
-    </RadioGroup>       
+    </RadioGroup>
 </LinearLayout>

@@ -21,6 +21,7 @@
     <string name="tv_age">年龄</string>
     <string name="et_age_hint">请输入年龄</string>
     <string name="btn_submit">提 交</string>
+    <string name="btn_modify">修 改</string>
     <string name="friends_group">好友分组</string>
     <string name="life_service">生活服务</string>
     <string name="btn_back_message">消息(0)</string>

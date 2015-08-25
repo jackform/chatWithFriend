@@ -54,6 +54,8 @@ public class FriendList {
                 friendInfo.setmJabberID(rosterEntries.get(j).getUser());
                 String imagePath =  XmppMethod.getInstance().getHeaderImagePaht(friendInfo.getmJabberID());
                 friendInfo.setmHeaderImagePath(imagePath);
+                friendInfo.setmMale(XmppMethod.getInstance().getMale(friendInfo.getmJabberID()));
+                friendInfo.setmAge(XmppMethod.getInstance().getAge(friendInfo.getmJabberID()));
                 friendInfos.add(friendInfo);
             }
             friendGroup.setmFriendInfo(friendInfos);

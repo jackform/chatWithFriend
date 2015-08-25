@@ -2,14 +2,18 @@ package org.jackform.innocent.adapter;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.jackform.innocent.R;
 import org.jackform.innocent.data.FriendGroup;
+import org.jackform.innocent.data.FriendInfo;
 import org.jackform.innocent.data.FriendList;
 
 import java.util.List;
@@ -70,9 +74,17 @@ public class FriendListExpandableAdapter extends  BaseExpandableListAdapter {
 		LayoutInflater inflate = LayoutInflater.from(mContext);
 		convertView = inflate.inflate(R.layout.item_friendlist_child, null);
 		TextView friendName = (TextView)convertView.findViewById(R.id.ct_name);
+		ImageView headImage = (ImageView)convertView.findViewById(R.id.ct_photo);
+		TextView sign = (TextView)convertView.findViewById(R.id.ct_sign);
+
 //		friendName.setText(arms[groupPosition][childPosition]);
 //		friendName.setText(mEntris.get(groupPosition).get(childPosition).getName());
-		friendName.setText(mGroupList.get(groupPosition).getmFriendInfo().get(childPosition).getmUserName());
+		FriendInfo friendInfo = mGroupList.get(groupPosition).getmFriendInfo().get(childPosition);
+		friendName.setText(friendInfo.getmUserName());
+		sign.setText(friendInfo.getmMale() +" "+ friendInfo.getmAge()+"岁");
+		String path = mGroupList.get(groupPosition).getmFriendInfo().get(childPosition).getmHeaderImagePath();
+		Bitmap bitmap =  BitmapFactory.decodeFile(path);
+		headImage.setImageBitmap(bitmap);
 		return convertView;
 	}
 

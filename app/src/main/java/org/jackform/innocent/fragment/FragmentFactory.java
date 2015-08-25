@@ -11,6 +11,9 @@ public class FragmentFactory {
 		case R.id.friendlist_tab:
 			fragment = new FriendListFragment();
 			break;
+        case R.id.tab3:
+			fragment = new PersonalInfoFragment();
+     		break;
 		default:
 			fragment = new NoneUseFragment();
 			break;
