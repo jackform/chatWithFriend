@@ -15,10 +15,12 @@ import org.jackform.innocent.data.RequestConstant;
 import org.jackform.innocent.data.ResponseConstant;
 import org.jackform.innocent.data.request.GetFriendListRequest;
 import org.jackform.innocent.data.request.LoginTaskRequest;
+import org.jackform.innocent.data.request.PersonalInfoRequest;
 import org.jackform.innocent.data.request.RegisterTaskRequest;
 import org.jackform.innocent.data.request.SendChatMessageRequest;
 import org.jackform.innocent.data.request.SendFileRequest;
 import org.jackform.innocent.data.request.UnBindTaskRequest;
+import org.jackform.innocent.data.request.UpdatePersonalInfoRequest;
 import org.jackform.innocent.utils.DebugLog;
 import org.jackform.innocent.xmpp.XmppExecutor;
 
@@ -141,6 +143,15 @@ public class NetworkService extends Service {
                     SendFileRequest sendFileRequest = request.getParcelable(RequestConstant.REQUEST_PARAMS);
                     XmppExecutor.getInstance(NetworkService.this).submit(sendFileRequest);
                     break;
+                case RequestConstant.REQUEST_GET_PERSONAL_INFO:
+                    request.setClassLoader(PersonalInfoRequest.class.getClassLoader());
+                    PersonalInfoRequest personalInfoRequest = request.getParcelable(RequestConstant.REQUEST_PARAMS);
+                    XmppExecutor.getInstance(NetworkService.this).submit(personalInfoRequest);
+                    break;
+                case RequestConstant.REQUEST_UPDATE_PERSONAL_INFO:
+                    request.setClassLoader(UpdatePersonalInfoRequest.class.getClassLoader());
+                    UpdatePersonalInfoRequest updatepersonalInfoRequest = request.getParcelable(RequestConstant.REQUEST_PARAMS);
+                    XmppExecutor.getInstance(NetworkService.this).submit(updatepersonalInfoRequest);
                 case RequestConstant.REQUEST_BASE:
                 default:
                     //TODO invalid request

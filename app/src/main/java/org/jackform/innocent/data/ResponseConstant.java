@@ -19,6 +19,8 @@ public interface ResponseConstant {
     int SEND_CHAT_MESSAGE_ID = BASE_ID + 6;
     int RECEIVE_CHAT_MESSAGE_ID = BASE_ID + 7;
     int SEND_FILE_ID = BASE_ID + 8;
+    int GET_PERSONAL_INFO_ID = BASE_ID + 9;
+    int UPDATE_PERSONAL_INFO_ID = BASE_ID + 10;
 
 
 

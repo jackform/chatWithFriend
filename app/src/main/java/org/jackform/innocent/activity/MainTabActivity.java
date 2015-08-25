@@ -1,24 +1,39 @@
 package org.jackform.innocent.activity;
 
+import android.content.ContentResolver;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.RadioGroup;
 
 import org.jackform.innocent.R;
 import org.jackform.innocent.fragment.FragmentFactory;
 import org.jackform.innocent.fragment.FriendListFragment;
+import org.jackform.innocent.fragment.PersonalInfoFragment;
 import org.jackform.innocent.utils.DataFetcher;
+import org.jackform.innocent.utils.DebugLog;
 import org.jackform.innocent.widget.BaseActivity;
 
 import android.widget.RadioGroup.OnCheckedChangeListener;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Created by jackform on 15-6-8.
@@ -191,5 +206,72 @@ public class MainTabActivity extends BaseActivity implements DataFetcher.Execute
         switch(responseID) {
         }
 
+    }
+
+    private Bitmap scaleBitmap(Bitmap photo) {
+        int picOriginalWidth = photo.getWidth();
+        int picOriginalHeight = photo.getHeight();
+        DisplayMetrics dm = new DisplayMetrics();
+        dm = getResources().getDisplayMetrics();
+        int screenWidth = dm.widthPixels;
+        int screenHeight = dm.heightPixels;
+
+        Matrix matrix = new Matrix();
+        float scaleWidth = 2.0f / 3 * screenWidth / picOriginalWidth;
+        float scaleHeight = 2.0f / 3 * screenHeight / picOriginalHeight;
+        matrix.postScale(scaleWidth, scaleHeight);// 利用矩阵进行缩放不会造成内存溢出
+        Bitmap newbmp = Bitmap.createBitmap(photo, 0, 0, picOriginalWidth,
+                picOriginalHeight, matrix, true);
+        return newbmp;
+    }
+
+
+
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, requestCode, data);
+        DebugLog.v("open album result:"+resultCode);
+        if (RESULT_OK != resultCode)
+            return;
+        switch (requestCode) {
+            case PersonalInfoFragment.CHOOSE_PICTURE:
+                if (data != null) {
+                    Uri originalUri = data.getData();
+                    Bitmap photo = null;
+                    DebugLog.v(originalUri.toString());
+                    DebugLog.v(originalUri.getPath());
+                    String[] proj = { MediaStore.Images.Media.DATA };
+                    CursorLoader loader = new CursorLoader(MainTabActivity.this,
+                            originalUri, proj, null, null, null);
+                    Cursor cursor = loader.loadInBackground();
+                    int column_index = cursor
+                            .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                    cursor.moveToFirst();
+                    DebugLog.v(cursor.getString(column_index));
+                    ContentResolver resolver = getContentResolver();
+                    try {
+                        photo = MediaStore.Images.Media.getBitmap(resolver,
+                                originalUri);
+                        if (photo != null) {
+                            Bitmap newbmp = scaleBitmap(photo);
+                            // photo.recycle();
+                            DebugLog.v("after scale");
+                            if(null != oldFragment && oldFragment instanceof PersonalInfoFragment){
+                                DebugLog.v("current is in the PersonalInfoFragment");
+                                //TODO save bitmap as myself.png
+                                ((PersonalInfoFragment)oldFragment).isPersonalInfoModified = 1;
+                            }
+                        }
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                break;
+            default:
+                break;
+        }
     }
 }

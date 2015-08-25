@@ -1,17 +1,22 @@
 package org.jackform.innocent.xmpp;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.DebugUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
 
+import org.jackform.innocent.data.APPConstant;
 import org.jackform.innocent.data.FriendList;
 import org.jackform.innocent.data.ResponseConstant;
 import org.jackform.innocent.data.result.GetFriendListResult;
+import org.jackform.innocent.data.result.PersonalInfoResult;
 import org.jackform.innocent.data.result.ReceiveChatMessageResult;
 import org.jackform.innocent.data.result.SendChatMessageResult;
 import org.jackform.innocent.service.MainThreadHandler;
@@ -50,6 +55,7 @@ import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.smackx.provider.StreamInitiationProvider;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -122,7 +128,7 @@ public class XmppMethod implements BaseMethod{
 
         ProviderManager pm = ProviderManager.getInstance();
         pm.addIQProvider("si", "http://jabber.org/protocol/si", new StreamInitiationProvider());
-        pm.addIQProvider("query",  "http://jabber.org/protocol/bytestreams", new BytestreamsProvider());
+        pm.addIQProvider("query", "http://jabber.org/protocol/bytestreams", new BytestreamsProvider());
 
         try {
             mConnect.connect();
@@ -158,6 +164,44 @@ public class XmppMethod implements BaseMethod{
 
     public boolean isLogin() {
         return isConnected && isLogined;
+    }
+
+    @Override
+    public Bundle updatePersonalInfo(int isHeadImageModified, String male, String age) {
+        Bundle res = new Bundle();
+        res.putInt(ResponseConstant.ID,ResponseConstant.UPDATE_PERSONAL_INFO_ID);
+        DebugLog.v("updatePersonalInfo\n male:"+male+" age:"+age);
+
+        VCard vcard = new VCard();
+        try {
+            vcard.load(mConnect);
+
+        if( isHeadImageModified == 1 ) {
+            byte[] headerImage;
+            String dirPath = Environment.getExternalStorageDirectory() + "/.IMTONG/Vcard/Head/";
+            String fileName =  dirPath + APPConstant.KEY_MYSELF_IMAGE_HEADER + ".png";
+            Bitmap bitmap = BitmapFactory.decodeFile(fileName);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            if(null == bitmap ) {
+                //TODO deal with some error
+                return res;
+            }
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            headerImage = baos.toByteArray();
+            String encodedImage = StringUtils.encodeBase64(headerImage);
+            vcard.setAvatar(headerImage, encodedImage);
+            vcard.setEncodedImage(encodedImage);
+            vcard.setField("PHOTO", "<TYPE>image/jpg</TYPE><BINVAL>"
+                    + encodedImage + "</BINVAL>", true);
+        }
+            vcard.setFirstName(male);
+            vcard.setLastName(age);
+            vcard.save(mConnect);
+        } catch (XMPPException e) {
+            e.printStackTrace();
+        }
+        res.putString(ResponseConstant.CODE, ResponseConstant.SUCCESS_CODE);
+        return res;
     }
 
     @Override
@@ -286,7 +330,7 @@ public class XmppMethod implements BaseMethod{
         DebugLog.v("[friendList]:"+jsonStr);
         GetFriendListResult getFriendListResult = new GetFriendListResult(jsonStr);
         res.putString(ResponseConstant.CODE, ResponseConstant.SUCCESS_CODE);
-        res.putParcelable(ResponseConstant.PARAMS,getFriendListResult);
+        res.putParcelable(ResponseConstant.PARAMS, getFriendListResult);
         return res;
     }
 
@@ -294,9 +338,6 @@ public class XmppMethod implements BaseMethod{
     public Bundle sendFile(String toUserJabberID, String filePath) {
         Bundle res = new Bundle();
         res.putInt(ResponseConstant.ID, ResponseConstant.SEND_FILE_ID);
-
-
-
 
         ServiceDiscoveryManager sdm =  ServiceDiscoveryManager.getInstanceFor(mConnect);
         if (sdm == null)
@@ -327,6 +368,66 @@ public class XmppMethod implements BaseMethod{
         }
         res.putString(ResponseConstant.CODE, ResponseConstant.SUCCESS_CODE);
         return res;
+    }
+
+    @Override
+    public Bundle getPersonalInfo() {
+        Bundle result = new Bundle();
+        result.putInt(ResponseConstant.ID,ResponseConstant.GET_PERSONAL_INFO_ID);
+
+        DebugLog.v("deal the request getpersonal info ");
+
+        String jabberID;
+        String male;
+        String age;
+        String HeaderImagePath;
+        String userName;
+
+        VCard card = new VCard();
+        try {
+            card.load(mConnect);
+        }catch(XMPPException e) {
+            e.printStackTrace();
+        }
+
+        jabberID = mConnect.getUser();
+        male = card.getFirstName();
+        age  = card.getLastName();
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(card.getAvatar());
+        byte buf[] = new byte[1024];
+        String dirPath = Environment.getExternalStorageDirectory() + "/.IMTONG/Vcard/Head/";
+        File dir = new File(dirPath);
+        if(!dir.exists()) {
+            dir.mkdirs();
+        }
+        String fileName =  dirPath + APPConstant.KEY_MYSELF_IMAGE_HEADER + ".png";
+        File download = new File(fileName);
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(download);
+            do {
+                int numread = bais.read(buf);
+                if (numread == -1) {
+                    break;
+                }
+                fos.write(buf, 0, numread);
+            } while (true);
+            bais.close();
+            fos.close();
+        } catch(FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        DebugLog.v("jabberID:" + jabberID + " male:" + male + " age:" + age + " fileName:" + fileName);
+        if(!TextUtils.isEmpty(jabberID)) {
+            result.putString(ResponseConstant.CODE, ResponseConstant.SUCCESS_CODE);
+            result.putParcelable(ResponseConstant.PARAMS,new PersonalInfoResult(jabberID,male,age,fileName));
+        } else {
+           //TODO deal with some error
+        }
+        return result;
     }
 
     public String getNickName(String user) {
@@ -394,5 +495,9 @@ public class XmppMethod implements BaseMethod{
             e.printStackTrace();
         }
         return fileName;
+    }
+
+    void getBasicFriendInfo(String user,String fileName,String male,String age) {
+
     }
 }

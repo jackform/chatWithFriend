@@ -162,7 +162,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/submit_register_info"
+            android:id="@+id/btn_modity_personal_info"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginLeft="20dp"

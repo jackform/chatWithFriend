@@ -13,6 +13,7 @@ import android.widget.ExpandableListView;
 
 import com.google.gson.Gson;
 
+import org.jackform.innocent.data.APPConstant;
 import org.jackform.innocent.data.FriendInfo;
 import org.jackform.innocent.R;
 import org.jackform.innocent.activity.ChatActivity;
@@ -79,6 +80,7 @@ public class FriendListFragment extends BaseFragment implements DataFetcher.Exec
 						DebugLog.v(child.getmUserName());
 						intent.putExtra("FRIEND_INFO", child.getmJabberID());
 						intent.putExtra("FRIEND_NAME", child.getmUserName());
+						intent.putExtra(APPConstant.KEY_HEADER_IMAGE_PATH,child.getmHeaderImagePath());
 						startActivity(intent);
 						return false;
 					}

@@ -8,6 +8,7 @@ import org.jackform.innocent.IResult;
 import org.jackform.innocent.data.ResponseConstant;
 import org.jackform.innocent.data.request.SendChatMessageRequest;
 import org.jackform.innocent.data.result.GetFriendListResult;
+import org.jackform.innocent.data.result.PersonalInfoResult;
 import org.jackform.innocent.data.result.ReceiveChatMessageResult;
 import org.jackform.innocent.data.result.SendChatMessageResult;
 import org.jackform.innocent.utils.DataFetcher;
@@ -63,6 +64,11 @@ public class AsAResult extends IResult.Stub {
             case ResponseConstant.RECEIVE_CHAT_MESSAGE_ID:
                 onReceiveChatMessage(result);
                 return;
+            case ResponseConstant.GET_PERSONAL_INFO_ID:
+                onGetPersonalInfoCompleted(result);
+                break;
+            case ResponseConstant.UPDATE_PERSONAL_INFO_ID:
+                onUpdatePersonalInfoCompleted(result);
             case ResponseConstant.BASE_ID:
             default:
                 //TODO deal invalid requestID
@@ -78,6 +84,13 @@ public class AsAResult extends IResult.Stub {
         }
     }
 
+    private void onUpdatePersonalInfoCompleted(Bundle result) {
+
+    }
+
+    private void onGetPersonalInfoCompleted(Bundle result) {
+        result.setClassLoader(PersonalInfoResult.class.getClassLoader());
+    }
 
     private void onSendChatMessageCompleted(Bundle result) {
         result.setClassLoader(SendChatMessageResult.class.getClassLoader());

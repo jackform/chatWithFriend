@@ -153,6 +153,7 @@ public class RegisterActivity extends BaseActivity implements DataFetcher.Execut
 			@Override
 			public void onClick(View view) {
 				showCropImagePopWindow(view);
+
 			}
 		});
 		mCaremaChoose.setOnClickListener(new OnClickListener() {

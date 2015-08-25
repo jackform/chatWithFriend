@@ -16,5 +16,7 @@ public interface BaseMethod {
     Bundle chat(String userJabberID,String chatMessage,String sendTime);
     Bundle getFriendList();
     Bundle sendFile(String toUserJabberID,String filePath);
+    Bundle getPersonalInfo();
+    Bundle updatePersonalInfo(int isHeaderModified,String male,String age);
 
 }

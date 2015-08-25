@@ -2,6 +2,8 @@ package org.jackform.innocent.activity;
 
 
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.widget.Toolbar;
@@ -13,11 +15,14 @@ import android.widget.ListView;
 
 import org.jackform.innocent.R;
 import org.jackform.innocent.adapter.ChatContentListAdapter;
+import org.jackform.innocent.data.APPConstant;
 import org.jackform.innocent.data.PerChatItem;
 import org.jackform.innocent.data.RequestConstant;
 import org.jackform.innocent.data.ResponseConstant;
+import org.jackform.innocent.data.request.PersonalInfoRequest;
 import org.jackform.innocent.data.request.SendChatMessageRequest;
 import org.jackform.innocent.data.request.SendFileRequest;
+import org.jackform.innocent.data.result.PersonalInfoResult;
 import org.jackform.innocent.data.result.ReceiveChatMessageResult;
 import org.jackform.innocent.data.result.SendChatMessageResult;
 import org.jackform.innocent.utils.DataFetcher;
@@ -49,6 +54,11 @@ public class ChatActivity extends BaseActivity implements DataFetcher.ExecuteLis
 	private Toolbar mToolBar;
 	private Button mBtnSend;
 	private EditText mEdtChatContent;
+
+	private Bitmap friendHeaderBitmap;
+	private Bitmap myselfHeaderBitmap;
+	private String friendHeaderPath;
+
 	/*
 	private String mFriend;
 	private Chat ToolbarmChat;
@@ -84,6 +94,8 @@ public class ChatActivity extends BaseActivity implements DataFetcher.ExecuteLis
 
 		mFriendJabberID = getIntent().getStringExtra("FRIEND_INFO");
 		mFriendName = getIntent().getStringExtra("FRIEND_NAME");
+		friendHeaderPath = getIntent().getStringExtra(APPConstant.KEY_PRIEND_HEADER_IMAGE);
+
 		DebugLog.v(mFriendJabberID);
 		DebugLog.v("username is" + mFriendName);
 		mToolBar.setSubtitle("您正在与" + mFriendName + "聊天中");
@@ -111,11 +123,17 @@ public class ChatActivity extends BaseActivity implements DataFetcher.ExecuteLis
 			}
 		});
 
+		requestPersonalInfo();
 //		setContentView(R.layout.activity_chat);
 //		mFriend = getIntent().getStringExtra("FRIEND_INFO");
 //		chatManager = XmppUtils.getConnection().getChatManager();
 //		mChat = chatManager.createChat(mFriend, null);
 //		chatManager.addChatListener(mChatManagerListener);
+	}
+
+	void requestPersonalInfo() {
+		PersonalInfoRequest request = new PersonalInfoRequest();
+		mDataFetcher.executeRequest(ChatActivity.this,RequestConstant.REQUEST_GET_PERSONAL_INFO,request);
 	}
 
 	void sendChatContenetRequest(String content) {
@@ -202,6 +220,14 @@ public class ChatActivity extends BaseActivity implements DataFetcher.ExecuteLis
 					*/
 				}
 				break;
+			case ResponseConstant.GET_PERSONAL_INFO_ID: {
+				PersonalInfoResult result = requestTask.getParcelable(ResponseConstant.PARAMS);
+				String myselfHeaderImagePath = result.getmImageHeaderPath();
+				myselfHeaderBitmap = BitmapFactory.decodeFile(myselfHeaderImagePath);
+				friendHeaderBitmap = BitmapFactory.decodeFile(friendHeaderPath);
+				mAdapter.setBitmap(myselfHeaderBitmap,friendHeaderBitmap);
+				break;
+			}
 			default:
 				break;
 		}

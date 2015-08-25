@@ -1,6 +1,7 @@
 package org.jackform.innocent.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +22,7 @@ import java.util.ArrayList;
 public class ChatContentListAdapter extends BaseAdapter {
     private ArrayList<PerChatItem> mData;
     private Context mContext;
-    private View mMeChatItemView;
-    private View mOtherChatItemView;
+    private Bitmap meBitmap,friendBitmap;
 
     public ChatContentListAdapter(Context context,ArrayList data) {
         mContext = context;
@@ -58,11 +58,13 @@ public class ChatContentListAdapter extends BaseAdapter {
             chatContent = (TextView)convertView.findViewById(R.id.chatlist_text_me);
             chatTime = (TextView)convertView.findViewById(R.id.chat_time_me);
             progressSendingView = (ProgressView) convertView.findViewById(R.id.progress_is_sending_me);
+            headImage.setImageBitmap(meBitmap);
         } else {
             headImage = (ImageView)convertView.findViewById(R.id.chatlist_image_other);
             chatContent = (TextView)convertView.findViewById(R.id.chatlist_text_other);
             chatTime = (TextView)convertView.findViewById(R.id.chat_time_other);
             progressSendingView = (ProgressView) convertView.findViewById(R.id.progress_is_sending_other);
+            headImage.setImageBitmap(friendBitmap);
         }
         if(mData.get(position).isSending()) {
             progressSendingView.setVisibility(View.VISIBLE);
@@ -74,7 +76,12 @@ public class ChatContentListAdapter extends BaseAdapter {
             progressSendingView.setVisibility(View.GONE);
         }
         chatContent.setText(mData.get(position).getChatContent());
-        chatTime.setText(mData.get(position).getDate());
         return convertView;
+
+    }
+
+    public void setBitmap(Bitmap myself,Bitmap friend) {
+        meBitmap = myself;
+        friendBitmap = friend;
     }
 }

@@ -12,4 +12,8 @@ public interface APPConstant {
     String KEY_HEADER_IMAGE_PATH = "headerImagePath";
     String KEY_MALE = "male";
     String KEY_AGE = "age";
+
+    String KEY_PRIEND_HEADER_IMAGE = "FriendImageHeader";
+
+    String KEY_MYSELF_IMAGE_HEADER = "myself";
 }
