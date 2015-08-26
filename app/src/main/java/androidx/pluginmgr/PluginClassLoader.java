@@ -19,7 +19,11 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.os.Debug;
 import android.util.Log;
+
+import org.jackform.innocent.utils.DebugLog;
+
 import dalvik.system.DexClassLoader;
 
 /**

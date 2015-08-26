@@ -58,8 +58,8 @@
         <service
             android:name=".service.NetworkService"
             android:enabled="true"
-            android:exported="false"
-            android:process="org.jackform.innocent.dataprovider">
+            android:exported="false">
+<!--            android:process="org.jackform.innocent.dataprovider">-->
         </service>
         <activity android:name="androidx.pluginmgr.PluginActivity" />
     </application>

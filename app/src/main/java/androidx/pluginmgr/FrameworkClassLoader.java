@@ -17,6 +17,8 @@ package androidx.pluginmgr;
 
 import android.util.Log;
 
+import org.jackform.innocent.utils.DebugLog;
+
 /**
  * 框架类加载器（Application 的 classLoder被替换成此类的实例）
  * 
@@ -40,11 +42,18 @@ class FrameworkClassLoader extends ClassLoader {
 	protected Class<?> loadClass(String className, boolean resolv)
 			throws ClassNotFoundException {
 		Log.i("cl", "loadClass: " + className);
+		DebugLog.v("in the FrameworkClassLoader,pluginID:" + plugId);
+		DebugLog.v("in the FrameworkClassLoader,actName:" + actName);
+
+//		plugId = "hellonfc.apk";
+		plugId = "com.example.hellonfc";
+		actName = "com.example.hellonfc.MainActivity";
 		if (plugId != null) {
 			String pluginId = plugId;
 
-			PlugInfo plugin = PluginManager.getInstance().getPluginById(
-					pluginId);
+			PlugInfo plugin = PluginManager.getInstance().getPluginById(plugId);
+//			PlugInfo plugin = PluginManager.getInstance().getPluginByPackageName(plugId);
+
 			Log.i("cl", "plugin = " + plugin);
 			if (plugin != null) {
 				try {

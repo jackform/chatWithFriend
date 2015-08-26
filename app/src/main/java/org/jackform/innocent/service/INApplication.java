@@ -8,6 +8,8 @@ import org.jackform.innocent.utils.DataFetcher;
 
 import java.nio.charset.MalformedInputException;
 
+import androidx.pluginmgr.PluginManager;
+
 /**
  * Created by jackform on 15-6-4.
  */
@@ -36,6 +38,7 @@ public class INApplication extends Application{
         //start a service for send\receive network data
         //bindService in case of that system killed the service
         DataFetcher.getInstance(this);
+        PluginManager plugMgr = PluginManager.getInstance(this);
     }
 }
 

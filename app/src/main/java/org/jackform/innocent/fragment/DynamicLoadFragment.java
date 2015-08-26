@@ -67,7 +67,7 @@ public class DynamicLoadFragment extends BaseFragment {
         Button pluginLoader = (Button) view.findViewById(R.id.pluginLoader);
         pluglistView = (ListView) view.findViewById(R.id.pluglist);
 
-        plugMgr = PluginManager.getInstance(mContext);
+        plugMgr = PluginManager.getInstance(null);
 
         String pluginSrcDir = sdcard + "/download";
         pluginDirTxt.setText(pluginSrcDir);

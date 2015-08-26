@@ -32,7 +32,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.os.Debug;
 import android.util.Log;
+
+import org.jackform.innocent.utils.DebugLog;
 
 /**
  * The Plug-in Manager
@@ -102,8 +105,11 @@ public class PluginManager implements FileFilter {
 					"startMainActivity: plug.getMainActivity().activityInfo == null!");
 			return false;
 		}
+		DebugLog.v("plugId:"+plug.getId());
+		DebugLog.v("name:"+plug.getMainActivity().activityInfo.name);
 		String className = frameworkClassLoader.newActivityClassName(
 				plug.getId(), plug.getMainActivity().activityInfo.name);
+		DebugLog.v("the className:"+className);
 		context.startActivity(new Intent().setComponent(new ComponentName(
 				context, className)));
 		return true;
