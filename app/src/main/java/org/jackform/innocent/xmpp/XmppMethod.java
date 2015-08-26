@@ -176,7 +176,7 @@ public class XmppMethod implements BaseMethod{
         try {
             vcard.load(mConnect);
 
-        if( isHeadImageModified == 1 ) {
+//        if( isHeadImageModified == 1 ) {
             byte[] headerImage;
             String dirPath = Environment.getExternalStorageDirectory() + "/.IMTONG/Vcard/Head/";
             String fileName =  dirPath + APPConstant.KEY_MYSELF_IMAGE_HEADER + ".png";
@@ -193,7 +193,7 @@ public class XmppMethod implements BaseMethod{
             vcard.setEncodedImage(encodedImage);
             vcard.setField("PHOTO", "<TYPE>image/jpg</TYPE><BINVAL>"
                     + encodedImage + "</BINVAL>", true);
-        }
+//        }
             vcard.setFirstName(male);
             vcard.setLastName(age);
             vcard.save(mConnect);

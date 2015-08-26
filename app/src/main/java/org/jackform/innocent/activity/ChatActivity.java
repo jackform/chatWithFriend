@@ -94,7 +94,7 @@ public class ChatActivity extends BaseActivity implements DataFetcher.ExecuteLis
 
 		mFriendJabberID = getIntent().getStringExtra("FRIEND_INFO");
 		mFriendName = getIntent().getStringExtra("FRIEND_NAME");
-		friendHeaderPath = getIntent().getStringExtra(APPConstant.KEY_PRIEND_HEADER_IMAGE);
+		friendHeaderPath = getIntent().getStringExtra(APPConstant.KEY_HEADER_IMAGE_PATH);
 
 		DebugLog.v(mFriendJabberID);
 		DebugLog.v("username is" + mFriendName);
@@ -202,7 +202,7 @@ public class ChatActivity extends BaseActivity implements DataFetcher.ExecuteLis
 				String from = receiveChatMessageResult.getmUserJabberID();
 				DebugLog.v(from);
 				if(from.startsWith(mFriendJabberID)) {
-					mFriendJabberID = from;
+//					mFriendJabberID = from;
 					DebugLog.v(receiveChatMessageResult.getmReceiveMessage());
 					mChatContentDatas.add(new PerChatItem(false, receiveChatMessageResult.getmReceiveMessage(),TimeUtils.getCurrentTime()));
 					runOnUiThread(new Runnable() {

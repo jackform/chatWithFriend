@@ -27,4 +27,6 @@ dependencies {
     //    compile "org.igniterealtime.smack:smack-android-extensions:4.1.0-rc1"
     //    compile "org.igniterealtime.smack:smack-tcp:4.1.0-rc1"
     compile files('libs/gson-2.1.jar')
+    compile files('libs/pluginmgr-0.1.2.jar')
+    compile files('libs/dexmaker-1.1.jar')
 }

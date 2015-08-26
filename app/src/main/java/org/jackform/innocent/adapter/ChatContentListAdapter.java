@@ -12,7 +12,6 @@ import android.widget.TextView;
 import org.jackform.customwidget.material.widget.ProgressView;
 import org.jackform.innocent.R;
 import org.jackform.innocent.data.PerChatItem;
-import org.jivesoftware.smackx.workgroup.MetaData;
 
 import java.util.ArrayList;
 
