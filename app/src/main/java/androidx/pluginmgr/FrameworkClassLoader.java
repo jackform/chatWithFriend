@@ -46,8 +46,8 @@ class FrameworkClassLoader extends ClassLoader {
 		DebugLog.v("in the FrameworkClassLoader,actName:" + actName);
 
 //		plugId = "hellonfc.apk";
-		plugId = "com.example.hellonfc";
-		actName = "com.example.hellonfc.MainActivity";
+//		plugId = "com.example.hellonfc";
+//		actName = "com.example.hellonfc.MainActivity";
 		if (plugId != null) {
 			String pluginId = plugId;
 

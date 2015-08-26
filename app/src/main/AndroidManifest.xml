@@ -39,9 +39,10 @@
         android:theme="@style/CustomActionBarTheme">
         <activity
             android:name=".activity.LoginActivity"
-            android:label="@string/title_activity_login"
+            android:label="@string/title_activity_login">
+            <!--
             android:process="org.jackform.innocent.uicontroler"
-            >
+           -->
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,12 +50,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MainTabActivity"
-            android:process="org.jackform.innocent.uicontroler"/>
-        <activity android:name=".activity.RegisterActivity"
-            android:process="org.jackform.innocent.uicontroler"/>
-        <activity android:name=".activity.ChatActivity"
-            android:process="org.jackform.innocent.uicontroler"/>
+        <activity android:name=".activity.MainTabActivity"/>
+<!--            android:process="org.jackform.innocent.uicontroler"/> -->
+        <activity android:name=".activity.RegisterActivity" />
+<!--            android:process="org.jackform.innocent.uicontroler"/> -->
+        <activity android:name=".activity.ChatActivity"/>
+<!--            android:process="org.jackform.innocent.uicontroler"/> -->
         <service
             android:name=".service.NetworkService"
             android:enabled="true"

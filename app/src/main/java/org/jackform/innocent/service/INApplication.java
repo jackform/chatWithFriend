@@ -38,7 +38,7 @@ public class INApplication extends Application{
         //start a service for send\receive network data
         //bindService in case of that system killed the service
         DataFetcher.getInstance(this);
-        PluginManager plugMgr = PluginManager.getInstance(this);
+//        PluginManager plugMgr = PluginManager.getInstance(this);
     }
 }
 
