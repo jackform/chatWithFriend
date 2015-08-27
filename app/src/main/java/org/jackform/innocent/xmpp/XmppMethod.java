@@ -246,7 +246,7 @@ public class XmppMethod implements BaseMethod{
                 // Log.d("Email", row.getValues("Email").next().toString());
                 // 若存在，则有返回,UserName一定非空，其他两个若是有设，一定非空
                 String username = row.getValues("Username").next().toString();
-                String jabberID = username + "jackform-k42jr";
+                String jabberID = username + "@jackform-k42jr";
                 VCard vcard = new VCard();
                 DebugLog.v("JabberID:"+jabberID);
                 vcard.load(mConnect, jabberID);
