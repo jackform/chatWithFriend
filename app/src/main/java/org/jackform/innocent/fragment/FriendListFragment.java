@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 
 import org.jackform.innocent.activity.MainTabActivity;
 import org.jackform.innocent.data.APPConstant;
+import org.jackform.innocent.data.DataEngine;
 import org.jackform.innocent.data.FriendInfo;
 import org.jackform.innocent.R;
 import org.jackform.innocent.activity.ChatActivity;
@@ -60,6 +61,14 @@ public class FriendListFragment extends BaseFragment implements DataFetcher.Exec
 		if(!hidden) {
 			getActivity().setTitle("好友列表");
 			((BaseActivity)getActivity()).setRightIconVisible();
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if(DataEngine.getInstance().isFriendListUpdated()) {
+			requestFriendList();
 		}
 	}
 

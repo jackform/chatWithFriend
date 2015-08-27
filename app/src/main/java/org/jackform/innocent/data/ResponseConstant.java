@@ -22,6 +22,8 @@ public interface ResponseConstant {
     int GET_PERSONAL_INFO_ID = BASE_ID + 9;
     int UPDATE_PERSONAL_INFO_ID = BASE_ID + 10;
     int SEARCHUSERS_ID = BASE_ID + 11;
+    int ADD_FRIEND_ID = BASE_ID + 12;
+    int RECEIVE_FRIEND_REQEST_ID = BASE_ID + 13;
 
 
 
@@ -35,4 +37,7 @@ public interface ResponseConstant {
 
 
     String SEARCH_USERS_FAILURE = "7";
+    String ADD_FRIEND_FAILURE = "8";
+    String USER_ALREADY_ADD = "9";
+    String CANNOT_ADD_ME_AS_FRIEND = "10";
 }

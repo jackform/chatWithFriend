@@ -71,7 +71,14 @@ public class AsAResult extends IResult.Stub {
                 onUpdatePersonalInfoCompleted(result);
                 break; 
             case ResponseConstant.SEARCHUSERS_ID:
-                onSearchUserListCompleted(result); 
+                onSearchUserListCompleted(result);
+                break;
+            case ResponseConstant.ADD_FRIEND_ID:
+                onAddFriendCompleted(result);
+                break;
+            case ResponseConstant.RECEIVE_FRIEND_REQEST_ID:
+                onReceiveFriendRequest(result);
+                return;
             case ResponseConstant.BASE_ID:
             default:
                 //TODO deal invalid requestID
@@ -85,6 +92,19 @@ public class AsAResult extends IResult.Stub {
         } else {
             excuteListener.onExecuteResult(responseID, result);
         }
+    }
+
+    private void onReceiveFriendRequest(Bundle result) {
+        Iterator iter = mResultListeners.entrySet().iterator();
+        while(iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            DataFetcher.ExecuteListener r = (DataFetcher.ExecuteListener) entry.getValue();
+            r.onExecuteResult(result.getInt(ResponseConstant.ID),result);
+        }
+    }
+
+    private void onAddFriendCompleted(Bundle result) {
+
     }
 
     private void onSearchUserListCompleted(Bundle result) {

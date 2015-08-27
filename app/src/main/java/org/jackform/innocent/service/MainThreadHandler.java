@@ -33,7 +33,23 @@ public class MainThreadHandler extends Handler {
         final int msgType = msg.what;
 
        switch(msgType) {
-           case ResponseConstant.RECEIVE_CHAT_MESSAGE_ID:
+           case ResponseConstant.RECEIVE_CHAT_MESSAGE_ID: {
+               final Bundle bundle = (Bundle) msg.obj;
+               super.post(new Runnable() {
+                   @Override
+                   public void run() {
+                       if (mResult == null)
+                           return;
+                       try {
+                           mResult.onResult(msgType, bundle);
+                       } catch (RemoteException e) {
+                           e.printStackTrace();
+                       }
+                   }
+               });
+               break;
+           }
+           case ResponseConstant.RECEIVE_FRIEND_REQEST_ID: {
                final Bundle bundle = (Bundle) msg.obj;
                super.post(new Runnable() {
                    @Override
@@ -48,6 +64,7 @@ public class MainThreadHandler extends Handler {
                    }
                });
                break;
+           }
            default:
                break;
 

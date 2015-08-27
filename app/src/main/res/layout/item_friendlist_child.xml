@@ -15,7 +15,6 @@
 		android:id="@+id/ct_name"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:maxLength="7"
 		android:textSize="10sp"
 		android:textStyle="bold"
 		android:text="为你我受冷风吹"

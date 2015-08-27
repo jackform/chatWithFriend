@@ -13,6 +13,7 @@ import org.jackform.innocent.INetworkService;
 import org.jackform.innocent.IResult;
 import org.jackform.innocent.data.RequestConstant;
 import org.jackform.innocent.data.ResponseConstant;
+import org.jackform.innocent.data.request.AddFriendRequest;
 import org.jackform.innocent.data.request.GetFriendListRequest;
 import org.jackform.innocent.data.request.LoginTaskRequest;
 import org.jackform.innocent.data.request.PersonalInfoRequest;
@@ -158,6 +159,11 @@ public class NetworkService extends Service {
                     request.setClassLoader(SearchUserListRequest.class.getClassLoader());
                     SearchUserListRequest searchUserListRequest = request.getParcelable(RequestConstant.REQUEST_PARAMS);
                     XmppExecutor.getInstance(NetworkService.this).submit(searchUserListRequest);
+                    break;
+                case RequestConstant.REQUEST_ADD_FRIEND:
+                    request.setClassLoader(AddFriendRequest.class.getClassLoader());
+                    AddFriendRequest addFriendRequest = request.getParcelable(RequestConstant.REQUEST_PARAMS);
+                    XmppExecutor.getInstance(NetworkService.this).submit(addFriendRequest);
                     break;
                 case RequestConstant.REQUEST_BASE:
                 default:

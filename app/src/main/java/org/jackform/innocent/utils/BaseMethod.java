@@ -19,5 +19,6 @@ public interface BaseMethod {
     Bundle getPersonalInfo();
     Bundle updatePersonalInfo(int isHeaderModified,String male,String age);
     Bundle searchUserList(String keyword);
+    Bundle addFriend(String user);
 
 }

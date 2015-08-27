@@ -12,9 +12,11 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import org.jackform.customwidget.superedittext.Colors;
 import org.jackform.innocent.data.APPConstant;
 import org.jackform.innocent.data.FriendInfo;
 import org.jackform.innocent.data.FriendList;
+import org.jackform.innocent.data.RequestConstant;
 import org.jackform.innocent.data.ResponseConstant;
 import org.jackform.innocent.data.SearchFriendList;
 import org.jackform.innocent.data.result.GetFriendListResult;
@@ -33,6 +35,7 @@ import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -42,6 +45,7 @@ import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Registration;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.sasl.SASLMechanism;
@@ -309,6 +313,43 @@ public class XmppMethod implements BaseMethod{
     }
 
     @Override
+    public Bundle addFriend(String user) {
+        Bundle res = new Bundle();
+        res.putInt(ResponseConstant.ID, ResponseConstant.ADD_FRIEND_ID);
+        try {
+            // 添加好友
+            Roster roster = mConnect.getRoster();
+            String jabberId = user.endsWith(mConnect.getServiceName()) ? user : user+"@"+mConnect.getServiceName();
+            String a[] = jabberId.split("@");
+            user = a[0];
+
+            DebugLog.v("the loggined user:"+mConnect.getUser());
+            //不能添加自己为好友
+            if(mConnect.getUser().startsWith(jabberId)) {
+                res.putString(ResponseConstant.CODE,ResponseConstant.CANNOT_ADD_ME_AS_FRIEND);
+                return res;
+            }
+            //不能添加已经添加的好友
+            /*
+            for(RosterEntry entry : roster.getEntries()) {
+                if(entry.getUser().equals(jabberId)) {
+                    res.putString(ResponseConstant.CODE, ResponseConstant.USER_ALREADY_ADD);
+                    return res;
+                }
+            }
+            */
+            DebugLog.v("start create Roster entry:\n"+"jabberId:"+jabberId+"\n"+"user:"+user);
+            roster.createEntry(jabberId, user, new String[] { "Friends" });
+        } catch (Exception e) {
+            e.printStackTrace();
+            res.putString(ResponseConstant.CODE,ResponseConstant.ADD_FRIEND_FAILURE);
+            return res;
+        }
+        res.putString(ResponseConstant.CODE,ResponseConstant.SUCCESS_CODE);
+        return res;
+    }
+
+    @Override
     public Bundle register(String account,String password,byte[] headerImage,String age,String male) {
         Bundle res = new Bundle();
         res.putInt(ResponseConstant.ID,ResponseConstant.REGISTER_ID);
@@ -366,6 +407,7 @@ public class XmppMethod implements BaseMethod{
     public Bundle chat(String userJabberID,String chatMessage,String sendTime) {
         Bundle res = new Bundle();
         res.putInt(ResponseConstant.ID, ResponseConstant.SEND_CHAT_MESSAGE_ID);
+        DebugLog.v("[send message]:"+"userJabberID:"+userJabberID+" message:"+chatMessage);
         Chat chat = mChatList.get(userJabberID);
         try {
             chat.sendMessage(chatMessage);
@@ -383,6 +425,7 @@ public class XmppMethod implements BaseMethod{
 
         @Override
         public void chatCreated(Chat chat, boolean able) {
+            DebugLog.v("chatCreated");
             chat.addMessageListener(mMessageListener);
         }
     };
@@ -411,27 +454,88 @@ public class XmppMethod implements BaseMethod{
     };
 
 
+/*
+    private RosterListener mRosterListener = new RosterListener() {
+        @Override
+        public void entriesAdded(Collection<String> collection) {
+        }
+
+        @Override
+        public void entriesUpdated(Collection<String> collection) {
+
+        }
+
+        @Override
+        public void entriesDeleted(Collection<String> collection) {
+
+        }
+
+        @Override
+        public void presenceChanged(Presence presence) {
+
+        }
+    };
+    */
+
     @Override
     public Bundle getFriendList() {
         Bundle res = new Bundle();
-        res.putInt(ResponseConstant.ID,ResponseConstant.GET_FRIEND_LIST_ID);
+        res.putInt(ResponseConstant.ID, ResponseConstant.GET_FRIEND_LIST_ID);
         Roster roster = mConnect.getRoster();
+        roster.addRosterListener(new RosterListener() {
+            @Override
+            public void entriesAdded(Collection<String> collection) {
+                String user = null;
+                for(String entry : collection) {
+                    DebugLog.v("[aaaa]"+entry);
+                    user = entry;
+                }
+                if(user == null)
+                    return;
+                android.os.Message msg = mMainThreadHandler.obtainMessage();
+                Bundle bundle = new Bundle();
+                bundle.putInt(ResponseConstant.ID, ResponseConstant.RECEIVE_FRIEND_REQEST_ID);
+                bundle.putString(ResponseConstant.PARAMS, user);
+
+                msg.what = ResponseConstant.RECEIVE_FRIEND_REQEST_ID;
+                msg.obj = bundle;
+                MainThreadHandler.getInstance().executeMessage(msg);
+            }
+
+            @Override
+            public void entriesUpdated(Collection<String> collection) {
+                for(String entry : collection) {
+                    DebugLog.v("[bbbb]"+entry);
+                }
+            }
+
+            @Override
+            public void entriesDeleted(Collection<String> collection) {
+                for(String entry : collection) {
+                    DebugLog.v("[cccc]"+entry);
+                }
+            }
+
+            @Override
+            public void presenceChanged(Presence presence) {
+                    DebugLog.v("presence");
+            }
+        });
         FriendList mfriendList = new FriendList(roster);
 
         mChatManager =  mConnect.getChatManager();
         mChatManager.addChatListener(mChatManagerListener);
         Collection<RosterEntry> rosterEntries = roster.getEntries();
         for(RosterEntry rosterEntry : rosterEntries) {
+            DebugLog.v("to create chat for "+rosterEntry.getUser());
             Chat chat = mChatManager.createChat(rosterEntry.getUser(),null);
             mChatList.put(rosterEntry.getUser(),chat);
-
-            //TODO add message receive listener
         }
 
 //        String friendJson
         Gson gson = new Gson();
         String jsonStr = gson.toJson(mfriendList);
-        DebugLog.v("[friendList]:"+jsonStr);
+        DebugLog.v("[friendList]:" + jsonStr);
         GetFriendListResult getFriendListResult = new GetFriendListResult(jsonStr);
         res.putString(ResponseConstant.CODE, ResponseConstant.SUCCESS_CODE);
         res.putParcelable(ResponseConstant.PARAMS, getFriendListResult);

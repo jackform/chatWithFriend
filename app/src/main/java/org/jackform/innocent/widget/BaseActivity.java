@@ -1,7 +1,10 @@
 package org.jackform.innocent.widget;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Debug;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -12,6 +15,7 @@ import android.widget.Toast;
 
 import org.jackform.customwidget.RippleView;
 import org.jackform.innocent.R;
+import org.jackform.innocent.activity.MainTabActivity;
 import org.jackform.innocent.data.RequestConstant;
 import org.jackform.innocent.data.request.UnBindTaskRequest;
 import org.jackform.innocent.utils.DataFetcher;
@@ -124,5 +128,22 @@ public abstract class BaseActivity extends AppCompatActivity {
                 Toast.makeText(BaseActivity.this, message, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+
+
+    ProgressDialog dialogLoading;
+    public void showProgressDialog(String title,String message) {
+        dialogLoading = new ProgressDialog(this);
+        dialogLoading.setTitle(title);
+        dialogLoading.setMessage(message);
+        dialogLoading.setCancelable(true);
+        dialogLoading.show();
+    }
+
+    public void dissmissprogressDialog() {
+        if(dialogLoading != null && dialogLoading.isShowing()) {
+            dialogLoading.dismiss();
+        }
     }
 }
