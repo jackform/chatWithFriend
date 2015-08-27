@@ -69,6 +69,9 @@ public class AsAResult extends IResult.Stub {
                 break;
             case ResponseConstant.UPDATE_PERSONAL_INFO_ID:
                 onUpdatePersonalInfoCompleted(result);
+                break; 
+            case ResponseConstant.SEARCHUSERS_ID:
+                onSearchUserListCompleted(result); 
             case ResponseConstant.BASE_ID:
             default:
                 //TODO deal invalid requestID
@@ -82,6 +85,9 @@ public class AsAResult extends IResult.Stub {
         } else {
             excuteListener.onExecuteResult(responseID, result);
         }
+    }
+
+    private void onSearchUserListCompleted(Bundle result) {
     }
 
     private void onUpdatePersonalInfoCompleted(Bundle result) {

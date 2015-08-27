@@ -34,6 +34,7 @@ import org.jackform.innocent.utils.DataFetcher;
 import org.jackform.innocent.utils.DebugLog;
 import org.jackform.innocent.widget.AccountEditText;
 import org.jackform.innocent.widget.AgeEditText;
+import org.jackform.innocent.widget.BaseActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -77,10 +78,26 @@ public class PersonalInfoFragment extends BaseFragment  implements DataFetcher.E
     }
 
     @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(!hidden) {
+            getActivity().setTitle("个人信息");
+            ((BaseActivity)getActivity()).setRightIconInvisible();
+        }
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mContext = activity;
+        getActivity().setTitle("个人信息");
+        ((BaseActivity)getActivity()).setRightIconInvisible();
         Log.v("hahaha", "onAttach");
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
     }
 
     @Override

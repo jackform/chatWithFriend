@@ -16,4 +16,5 @@ public interface APPConstant {
     String KEY_PRIEND_HEADER_IMAGE = "FriendImageHeader";
 
     String KEY_MYSELF_IMAGE_HEADER = "myself";
+    String KEY_SEARCH_PRIEND_LIST = "searchFriendList";
 }

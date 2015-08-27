@@ -21,6 +21,7 @@ public interface ResponseConstant {
     int SEND_FILE_ID = BASE_ID + 8;
     int GET_PERSONAL_INFO_ID = BASE_ID + 9;
     int UPDATE_PERSONAL_INFO_ID = BASE_ID + 10;
+    int SEARCHUSERS_ID = BASE_ID + 11;
 
 
 
@@ -33,4 +34,5 @@ public interface ResponseConstant {
     String REGISTER_FAILURE = "6";
 
 
+    String SEARCH_USERS_FAILURE = "7";
 }

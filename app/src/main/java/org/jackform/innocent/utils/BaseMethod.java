@@ -18,5 +18,6 @@ public interface BaseMethod {
     Bundle sendFile(String toUserJabberID,String filePath);
     Bundle getPersonalInfo();
     Bundle updatePersonalInfo(int isHeaderModified,String male,String age);
+    Bundle searchUserList(String keyword);
 
 }

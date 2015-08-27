@@ -13,6 +13,7 @@ import android.widget.ExpandableListView;
 
 import com.google.gson.Gson;
 
+import org.jackform.innocent.activity.MainTabActivity;
 import org.jackform.innocent.data.APPConstant;
 import org.jackform.innocent.data.FriendInfo;
 import org.jackform.innocent.R;
@@ -25,6 +26,7 @@ import org.jackform.innocent.data.request.GetFriendListRequest;
 import org.jackform.innocent.data.result.GetFriendListResult;
 import org.jackform.innocent.utils.DataFetcher;
 import org.jackform.innocent.utils.DebugLog;
+import org.jackform.innocent.widget.BaseActivity;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterGroup;
 
@@ -47,7 +49,18 @@ public class FriendListFragment extends BaseFragment implements DataFetcher.Exec
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		mContext = activity;
+		getActivity().setTitle("好友列表");
+		((BaseActivity)getActivity()).setRightIconVisible();
 		Log.v("hahaha", "onAttach");
+	}
+
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		if(!hidden) {
+			getActivity().setTitle("好友列表");
+			((BaseActivity)getActivity()).setRightIconVisible();
+		}
 	}
 
 	@Override
@@ -63,7 +76,6 @@ public class FriendListFragment extends BaseFragment implements DataFetcher.Exec
 
 		super.onCreateView(inflater, container, savedInstanceState);
 		View view = inflater.inflate(R.layout.activity_main, null);
-
 		friendListAdapter = new FriendListExpandableAdapter(mContext);
 		friendListView = (ExpandableListView) view
 				.findViewById(R.id.friend_list);

@@ -13,8 +13,10 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import org.jackform.innocent.data.APPConstant;
+import org.jackform.innocent.data.FriendInfo;
 import org.jackform.innocent.data.FriendList;
 import org.jackform.innocent.data.ResponseConstant;
+import org.jackform.innocent.data.SearchFriendList;
 import org.jackform.innocent.data.result.GetFriendListResult;
 import org.jackform.innocent.data.result.PersonalInfoResult;
 import org.jackform.innocent.data.result.ReceiveChatMessageResult;
@@ -44,6 +46,8 @@ import org.jivesoftware.smack.packet.Registration;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.sasl.SASLMechanism;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.ReportedData;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.bytestreams.socks5.provider.BytestreamsProvider;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
@@ -53,6 +57,7 @@ import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
 import org.jivesoftware.smackx.filetransfer.StreamNegotiator;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.smackx.provider.StreamInitiationProvider;
+import org.jivesoftware.smackx.search.UserSearchManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -60,8 +65,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by jackform on 15-7-6.
@@ -151,6 +158,16 @@ public class XmppMethod implements BaseMethod{
                 e.printStackTrace();
             }
         }
+
+        if(isLogin()) {
+            mConnect.disconnect();
+            try {
+                mConnect.connect();
+            } catch (XMPPException e) {
+                e.printStackTrace();
+            }
+        }
+
         try {
             mConnect.login(account, password);
         } catch (XMPPException e) {
@@ -201,6 +218,93 @@ public class XmppMethod implements BaseMethod{
             e.printStackTrace();
         }
         res.putString(ResponseConstant.CODE, ResponseConstant.SUCCESS_CODE);
+        return res;
+    }
+
+    @Override
+    public Bundle searchUserList(String keyword) {
+        Bundle res = new Bundle();
+        res.putInt(ResponseConstant.ID,ResponseConstant.SEARCHUSERS_ID);
+        UserSearchManager usm = new UserSearchManager(mConnect);
+        Form searchForm = null;
+        SearchFriendList friendList = null;
+        ArrayList<FriendInfo> friends = new ArrayList<FriendInfo>();
+        try {
+            searchForm = usm.getSearchForm("search." + mConnect.getServiceName());
+            Form answerForm = searchForm.createAnswerForm();
+            answerForm.setAnswer("Username", true);
+            answerForm.setAnswer("search", keyword);
+            ReportedData data = usm.getSearchResults(answerForm, "search." + mConnect.getServiceName());
+            // column:jid,Username,Name,Email
+            Iterator<ReportedData.Row> it = data.getRows();
+            ReportedData.Row row = null;
+            while (it.hasNext()) {
+                row = it.next();
+                // Log.d("UserName",
+                // row.getValues("Username").next().toString());
+                // Log.d("Name", row.getValues("Name").next().toString());
+                // Log.d("Email", row.getValues("Email").next().toString());
+                // 若存在，则有返回,UserName一定非空，其他两个若是有设，一定非空
+                String username = row.getValues("Username").next().toString();
+                String jabberID = username + "jackform-k42jr";
+                VCard vcard = new VCard();
+                DebugLog.v("JabberID:"+jabberID);
+                vcard.load(mConnect, jabberID);
+                String male = vcard.getFirstName();
+                String age = vcard.getLastName();
+                DebugLog.v("male:" + male);
+                DebugLog.v("age:"+ age);
+
+                ByteArrayInputStream bais = new ByteArrayInputStream(vcard.getAvatar());
+                byte buf[] = new byte[1024];
+                String dirPath = Environment.getExternalStorageDirectory() + "/.IMTONG/Vcard/Head/";
+                File dir = new File(dirPath);
+                if(!dir.exists()) {
+                    dir.mkdirs();
+                }
+                String fileName =  dirPath + jabberID + ".png";
+                File download = new File(fileName);
+                FileOutputStream fos = null;
+                fos = new FileOutputStream(download);
+                do {
+                    int numread = bais.read(buf);
+                    if (numread == -1) {
+                        break;
+                    }
+                    fos.write(buf, 0, numread);
+                } while (true);
+                bais.close();
+                fos.close();
+
+                FriendInfo friendInfo = new FriendInfo();
+                friendInfo.setmJabberID(jabberID);
+                friendInfo.setmUserName(username);
+                friendInfo.setmMale(male);
+                friendInfo.setmAge(age);
+                friendInfo.setmHeaderImagePath(fileName);
+                friends.add(friendInfo);
+//                users.add(row.getValues("Username").next().toString());
+            }
+            friendList = new SearchFriendList(friends);
+
+        } catch (XMPPException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch(FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if(friendList == null) {
+            res.putString(ResponseConstant.CODE,ResponseConstant.SEARCH_USERS_FAILURE);
+            return res;
+        }
+        Gson gson = new Gson();
+        String jsonStr = gson.toJson(friendList);
+        DebugLog.v("[userList]:"+jsonStr);
+        res.putString(ResponseConstant.CODE,ResponseConstant.SUCCESS_CODE);
+        res.putString(ResponseConstant.PARAMS,jsonStr);
         return res;
     }
 
@@ -497,7 +601,8 @@ public class XmppMethod implements BaseMethod{
         return fileName;
     }
 
-    void getBasicFriendInfo(String user,String fileName,String male,String age) {
-
+    Bundle getBasicFriendInfo(String user,String fileName,String male,String age) {
+        Bundle res = new Bundle();
+        return res;
     }
 }

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <include layout="@layout/custome_tool_bar"/>
+    <!-- search edit -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white">
+        <org.jackform.innocent.widget.SearchEdiText
+            android:id="@+id/edit_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="12dp"
+            android:hint="@string/hint_search_friend"
+            android:imeOptions="actionSearch"
+            app:met_iconLeft="@drawable/search_01"
+            app:met_iconPadding="0dp"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:src="@drawable/wrapper"/>
+    </LinearLayout>
+
+    <!-- search result list -->
+    <ListView android:id="@+id/search_user_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/darker_gray"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@drawable/wrapper"
+        android:dividerHeight="1dp"
+        android:headerDividersEnabled="true" />
+</LinearLayout>

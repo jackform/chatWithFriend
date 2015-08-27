@@ -31,6 +31,7 @@ import org.jackform.innocent.utils.DebugLog;
 import org.jackform.innocent.widget.BaseActivity;
 
 import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.TextView;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -44,7 +45,7 @@ public class MainTabActivity extends BaseActivity implements DataFetcher.Execute
     private FragmentManager	fragmentManager;
     private Fragment oldFragment = null;
     private int lastClickId;
-    private Toolbar mToolBar;
+
     private String mAccount;
     private String mJabberID;
     private String mImageHeaderPath;
@@ -91,15 +92,17 @@ public class MainTabActivity extends BaseActivity implements DataFetcher.Execute
         this.mAge = mAge;
     }
 
+
+    public void onTitleRightPressed() {
+        Intent intent = new Intent(MainTabActivity.this,SearchFriendActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
-//        mDataFetcher.setResultListener(this);
-        //设置actionBar
-        mToolBar = (Toolbar)findViewById(R.id.tool_bar);
-        setSupportActionBar(mToolBar);
-//        mToolBar.setNavigationIcon(R.mipmap.nav_btn_back);
+        setTitle("主界面");
         fragmentManager = getSupportFragmentManager();
         underLineTab = (RadioGroup)findViewById(R.id.tab_view);
         underLineTab.check(R.id.friendlist_tab);

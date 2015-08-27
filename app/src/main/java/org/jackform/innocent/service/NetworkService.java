@@ -17,6 +17,7 @@ import org.jackform.innocent.data.request.GetFriendListRequest;
 import org.jackform.innocent.data.request.LoginTaskRequest;
 import org.jackform.innocent.data.request.PersonalInfoRequest;
 import org.jackform.innocent.data.request.RegisterTaskRequest;
+import org.jackform.innocent.data.request.SearchUserListRequest;
 import org.jackform.innocent.data.request.SendChatMessageRequest;
 import org.jackform.innocent.data.request.SendFileRequest;
 import org.jackform.innocent.data.request.UnBindTaskRequest;
@@ -152,6 +153,12 @@ public class NetworkService extends Service {
                     request.setClassLoader(UpdatePersonalInfoRequest.class.getClassLoader());
                     UpdatePersonalInfoRequest updatepersonalInfoRequest = request.getParcelable(RequestConstant.REQUEST_PARAMS);
                     XmppExecutor.getInstance(NetworkService.this).submit(updatepersonalInfoRequest);
+                    break;
+                case RequestConstant.REQUEST_SEARCH_USER_LIST:
+                    request.setClassLoader(SearchUserListRequest.class.getClassLoader());
+                    SearchUserListRequest searchUserListRequest = request.getParcelable(RequestConstant.REQUEST_PARAMS);
+                    XmppExecutor.getInstance(NetworkService.this).submit(searchUserListRequest);
+                    break;
                 case RequestConstant.REQUEST_BASE:
                 default:
                     //TODO invalid request

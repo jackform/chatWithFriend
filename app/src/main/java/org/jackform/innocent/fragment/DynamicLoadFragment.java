@@ -22,6 +22,7 @@ import org.jackform.innocent.R;
 import org.jackform.innocent.activity.MainTabActivity;
 import org.jackform.innocent.utils.DebugLog;
 import org.jackform.innocent.adapter.PlugListViewAdapter;
+import org.jackform.innocent.widget.BaseActivity;
 
 import java.io.File;
 import java.util.Collection;
@@ -49,7 +50,18 @@ public class DynamicLoadFragment extends BaseFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mContext = activity;
+        getActivity().setTitle("动态加载");
+        ((BaseActivity)getActivity()).setRightIconInvisible();
         Log.v("hahaha", "onAttach");
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(!hidden) {
+            getActivity().setTitle("动态加载");
+            ((BaseActivity)getActivity()).setRightIconInvisible();
+        }
     }
 
     @Override

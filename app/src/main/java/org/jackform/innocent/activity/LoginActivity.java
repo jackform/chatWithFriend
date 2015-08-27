@@ -13,7 +13,6 @@ import org.jackform.innocent.data.RequestConstant;
 import org.jackform.innocent.data.ResponseConstant;
 import org.jackform.innocent.data.request.LoginTaskRequest;
 import org.jackform.innocent.utils.DataFetcher;
-import org.jackform.innocent.utils.DebugLog;
 import org.jackform.innocent.widget.BaseActivity;
 
 public class LoginActivity extends BaseActivity implements DataFetcher.ExecuteListener {
@@ -39,7 +38,7 @@ public class LoginActivity extends BaseActivity implements DataFetcher.ExecuteLi
         switch(responseID) {
             case ResponseConstant.LOGIN_ID:
                 Intent intent = new Intent(LoginActivity.this,MainTabActivity.class);
-                intent.putExtra("ACCOUNT","jackform");
+                intent.putExtra("ACCOUNT",mEdtAccount.getText().toString());
                 startActivity(intent);
                 unBindRemoteService();
                 finish();
